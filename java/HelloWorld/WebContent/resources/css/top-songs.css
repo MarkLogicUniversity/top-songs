@@ -1,0 +1,196 @@
+@charset "utf-8";
+body {
+	background-color: #666;
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 11px;
+	line-height: 150%;
+	color: #333;
+	padding-top: 20px;
+}
+form {
+	display: inline;
+}
+
+a {
+	color: #333;
+}
+
+#wrapper {
+	background-color: #FFF;
+	width: 940px;
+	padding-top: 12px;
+	padding-right: 10px;
+	padding-bottom: 0px;
+	padding-left: 10px;
+	margin: auto;
+}
+
+#header {
+	background-color: #56488C;
+	margin: 4px;
+}
+#leftcol {
+	background-color: #B6ADD6;
+	float: left;
+	margin: 4px;
+	width: 200px;
+	padding-top: 20px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+	padding-left: 13px;
+}
+#leftcol .category {
+	font-size: 12px;
+	color: #55488B;
+	font-weight: bold;
+	margin-bottom: 4px;
+}
+#leftcol a.more {
+	font-weight: bold;
+	color: #FFF;
+	text-decoration: none;
+	font-size: 10px;
+}
+
+#rightcol {
+	float: right;
+	width: 702px;
+}
+
+#searchdiv {
+	background-color: #A7C030;
+	padding-top: 12px;
+	padding-right: 15px;
+	padding-bottom: 12px;
+	padding-left: 30px;
+	margin-top: 4px;
+	margin-right: 4px;
+	margin-bottom: 8px;
+	margin-left: 4px;
+}
+#detaildiv {
+	background-color: #DFEAAC;
+	margin: 4px;
+	padding-top: 12px;
+	padding-right: 35px;
+	padding-bottom: 16px;
+	padding-left: 30px;
+}
+#detaildiv a {
+	color: #6D7D20;
+}
+
+#resultnumbers {
+	float: left;
+	
+}
+#sortoptions {
+	float: right;
+}
+#results {
+	clear: both;
+}
+
+#detailfooter {
+	clear: both;
+	height: 2px;
+}
+#footer {
+	clear: both;
+	height: 10px;
+}
+#sortbydiv {
+	text-align: right;
+	margin-top: 8px;
+	margin-bottom: 8px;
+}
+.imgbaseline {
+	vertical-align: text-bottom;
+}
+
+#countdiv {
+	text-align: right;
+}
+#pagenumdiv {
+	text-align: right;
+}
+
+.songname {
+	padding-top: 10px;
+	padding-bottom: 1px;
+	font-weight: bold;
+}
+
+.week {
+	padding-bottom: 0px;
+}
+.genre {
+	padding-bottom: 1px;
+}
+
+.description {
+	margin-bottom: 6px;
+}
+
+.spacer12px {
+	height: 12px;
+}
+
+.songnamelarge {
+	padding-top: 10px;
+	padding-bottom: 6px;
+	font-weight: bold;
+	font-size: 15px;
+}
+.detailitem {
+	margin-bottom: 4px;
+	font-size: 11px;
+}
+.albumimage {
+	float: right;
+	margin-left: 20px;
+	margin-top: 4px;
+	margin-bottom: 10px;
+}
+.tiny {
+	font-size: 9px;
+	font-style: italic;
+}
+.purplesubheading {
+	font-size: 12px;
+	font-weight: bold;
+	color: #56498E;
+	margin-bottom: 4px;
+}
+.tinynoitalics {
+	font-size: 9px;
+	margin-top: 3px;
+}
+.highlight {
+	background-color: #C8DB6F;
+}
+.white {
+	color:white;
+	text-decoration: none;
+	font-weight:bold;
+}
+
+.facet{
+    padding-top: 2px;
+    padding-bottom: 12px;
+}
+.facet-value {
+    display: block;
+}
+.facet-hidden {
+    display: none;
+}
+.facet-toggle {
+}
+.facet-toggle-hidden {
+  display: none;
+}
+
+.padleft {
+	padding-left: 8px;
+}
