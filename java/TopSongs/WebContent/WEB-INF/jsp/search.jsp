@@ -1,4 +1,5 @@
-<%@ page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="com.marklogic.client.query.MatchDocumentSummary" %>
+				
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -26,7 +27,18 @@
     <input style="border:0; width:0; height:0; background-color: #A7C030" type="text" size="0" maxlength="0"/><input type="submit" id="submitbtn" name="submitbtn" value="search"/>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<a href="advanced.html">advanced search</a>
   </div>
   <div id="detaildiv">
-  	default content here
+  
+<%
+	MatchDocumentSummary[] results = (MatchDocumentSummary[]) request.getAttribute("results");
+	if (results.length == 0) {
+	%> <div> Sorry, no results for your search. <br/><br/><br/></div> <% 
+	} else {
+		%> found matches for your query <% 
+		
+	}
+
+%>  
+
   </div>
   </form>
 </div>
