@@ -30,13 +30,13 @@
   
 <%
 	MatchDocumentSummary[] results = (MatchDocumentSummary[]) request.getAttribute("results");
-	if (results.length == 0) {
-	%> <div> Sorry, no results for your search. <br/><br/><br/></div> <% 
-	} else {
-		%> found matches for your query <% 
-		
-	}
-
+	if (results != null) {
+		if (results.length == 0) {
+		%> <div> Sorry, no results for your search. <br/><br/><br/></div> <% 
+		} else {
+		%> 	<div> results found <br/><br/><br/></div> <% 	
+		}
+	} 
 %>  
 
   </div>
