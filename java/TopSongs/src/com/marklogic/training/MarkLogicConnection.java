@@ -23,19 +23,35 @@ public class MarkLogicConnection {
 
 	private static DatabaseClient client = null;
 	
+	private static MarkLogicConnection conn = null;
+	
+	/*
+	 * singleton to ensure callers use the same instance (prevent abuse through public constructors)
+	 */
+	public static MarkLogicConnection getInstance() {
+		if (conn == null) {
+			return new MarkLogicConnection();			
+		} else {
+			return conn;
+		}
+	}
+	
 	/**
 	 * constructor to create a connection the MarkLogic Database
 	 * Uses default name of properties file
+	 * private to restrict access
 	 */
-	public MarkLogicConnection() {
+	private MarkLogicConnection() {
 		createConnection("marklogic.properties");
 		
 	}
 	/**
 	 * 
 	 * @param filename name of the file containing MarkLogic connection properties
+	 * 
+	 * private to restrict access to class creation
 	 */
-	public MarkLogicConnection(String filename) {
+	private MarkLogicConnection(String filename) {
 		createConnection(filename);
 	}
 	/**
@@ -96,6 +112,14 @@ public class MarkLogicConnection {
 		return client;
 	}
 	
+	/*
+	 * release the MarkLogic db connection
+	 * 
+	 */
+	public void release() {
+		logger.info("releasing ML connection");
+		client.release();
+	}
 	/**
 	 * @param args
 	 */
