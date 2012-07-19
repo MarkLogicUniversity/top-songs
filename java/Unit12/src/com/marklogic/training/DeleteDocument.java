@@ -3,7 +3,7 @@ package com.marklogic.training;
 import java.io.File;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.marklogic.client.XMLDocumentManager;
+import com.marklogic.client.document.XMLDocumentManager;
 
 public class DeleteDocument {
 

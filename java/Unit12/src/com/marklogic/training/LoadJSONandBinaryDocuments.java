@@ -5,9 +5,9 @@ import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.marklogic.client.BinaryDocumentManager;
-import com.marklogic.client.Format;
-import com.marklogic.client.JSONDocumentManager;
+import com.marklogic.client.document.BinaryDocumentManager;
+import com.marklogic.client.io.Format;
+import com.marklogic.client.document.JSONDocumentManager;
 import com.marklogic.client.io.BytesHandle;
 import com.marklogic.client.io.DocumentMetadataHandle;
 import com.marklogic.client.io.InputStreamHandle;

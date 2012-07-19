@@ -7,10 +7,10 @@ import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.marklogic.client.Format;
-import com.marklogic.client.XMLDocumentManager;
-import com.marklogic.client.XMLDocumentManager.DocumentRepair;
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.document.XMLDocumentManager.DocumentRepair;
 import com.marklogic.client.io.DocumentMetadataHandle;
+import com.marklogic.client.io.Format;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.StringHandle;
 
@@ -34,7 +34,21 @@ public class LoadDocumentMIMEandRepair {
 		
 				// create a handle on the content
 				InputStreamHandle contentHandle = new InputStreamHandle(docStream);
-								
+				/*
+				String s = "<html>"+
+						"<head>"+
+						"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>"+
+						"</head>"+
+						"<body>"+
+						"It's <b><i>very</b></i> interesting to see how music has changed over the years."+
+						"</body>"+
+						"</html>";
+
+				String docId = "/testjava/repair.xhtml";
+						
+				docMgr.write(docId, new StringHandle(s));
+				*/
+				
 				String uid = "/songs/"+filename;
 				// create the handle for the document options
 				DocumentMetadataHandle metadataHandle = new DocumentMetadataHandle();
@@ -53,6 +67,8 @@ public class LoadDocumentMIMEandRepair {
 				StringHandle sh = new StringHandle();
 				// 2. read the doc
 				docMgr.read(uid, sh);
+				//docMgr.read(docId, sh);
+				
 				// 3. log the document as a string
 				logger.info("Document : note the fixed tags!!! \n"+sh.get() );
 							    
