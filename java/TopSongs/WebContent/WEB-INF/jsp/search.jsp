@@ -1,4 +1,4 @@
-<%@ page import="com.marklogic.client.query.MatchDocumentSummary" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 				
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -28,17 +28,18 @@
   </div>
   <div id="detaildiv">
   
-<%
-	MatchDocumentSummary[] results = (MatchDocumentSummary[]) request.getAttribute("results");
-	if (results != null) {
-		if (results.length == 0) {
-		%> <div> Sorry, no results for your search. <br/><br/><br/></div> <% 
-		} else {
-		%> 	<div> results found <br/><br/><br/></div> <% 	
-		}
-	} 
-%>  
-
+     <c:forEach items="${songs}" var="song">
+      <div>
+         <div class="songname">"${song.title}" by ${song.artist}</div>
+         <div class="week"> ending week: ${song.weekending} 
+            (total weeks: ${song.totalweeks})</div>    
+         <div class="genre">genre: ${song.genres}</div>
+         <div class="description">${song.description} ...&#160;
+            <a href="search/detail?uri=${song.uri}">[more]</a>
+         </div>
+      </div>
+	</c:forEach>
+	
   </div>
   </form>
 </div>

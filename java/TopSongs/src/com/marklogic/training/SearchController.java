@@ -13,8 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.marklogic.client.query.MatchDocumentSummary;
-
 @Controller
 @RequestMapping("/search")
 public class SearchController {
@@ -42,16 +40,16 @@ public class SearchController {
 			arg = "";			
 		}
 		
-		MatchDocumentSummary[] docSummaries = null;
+		Song[] songs = null;
 		try {
 			 
-			docSummaries = search.search(arg);
+			songs = search.search(arg);
 			
 		} catch (Exception e ) {
 			logger.error("caught exception in search()"+e.toString() );
 		}
 	
-		model.addAttribute("results", docSummaries);
+		model.addAttribute("songs", songs);
 		
 		return "search";
 	}

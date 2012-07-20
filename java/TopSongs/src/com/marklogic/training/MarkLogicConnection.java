@@ -35,6 +35,16 @@ public class MarkLogicConnection {
 			return conn;
 		}
 	}
+	/*
+	 * singleton to ensure callers use the same instance (prevent abuse through public constructors)
+	 */
+	public static MarkLogicConnection getInstance(String propsFileName) {
+		if (conn == null) {
+			return new MarkLogicConnection(propsFileName);			
+		} else {
+			return conn;
+		}
+	}
 	
 	/**
 	 * constructor to create a connection the MarkLogic Database
@@ -42,7 +52,7 @@ public class MarkLogicConnection {
 	 * private to restrict access
 	 */
 	private MarkLogicConnection() {
-		createConnection("marklogic.properties");
+		createConnection("data/marklogic.properties");
 		
 	}
 	/**
@@ -85,8 +95,8 @@ public class MarkLogicConnection {
 		// connection parameters for writer user
 		String         host            = props.getProperty("marklogic.host");
 		int            port            = Integer.parseInt(props.getProperty("marklogic.port"));
-		String         writer_user     = props.getProperty("marklogic.writer_user");
-		String         writer_password = props.getProperty("marklogic.writer_password");
+		String         user     		= props.getProperty("marklogic.user");
+		String         password 		= props.getProperty("marklogic.password");
 		Authentication authType        = Authentication.valueOf(
 										 props.getProperty("marklogic.authentication_type").toUpperCase()
 										 );
@@ -95,7 +105,7 @@ public class MarkLogicConnection {
 		
 		try {
 			// create the client
-			client = DatabaseClientFactory.newClient(host, port, writer_user, writer_password, authType);
+			client = DatabaseClientFactory.newClient(host, port, user, password, authType);
 		} catch (Exception e) {
 			logger.error("Failed to create db connection " + e.toString() + e.getMessage() );
 			throw new RuntimeException(e);
