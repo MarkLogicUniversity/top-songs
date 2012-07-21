@@ -1,10 +1,14 @@
 package com.marklogic.training;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +52,64 @@ public class SearchController {
 		} catch (Exception e ) {
 			logger.error("caught exception in search()"+e.toString() );
 		}
+		
+		
+		// set the display mode for the JSP  
+		model.addAttribute("mode", "list");
 	
 		model.addAttribute("songs", songs);
 		
 		return "search";
+	}
+
+	/**
+	 * Fetches the song detail page.
+	 */
+	@RequestMapping("detail.html")	
+	public String detail(@RequestParam(required=true, value="uri") String uri, Model model) {
+		
+		logger.info("entered song details controller function");
+		String arg = null;
+		
+		if (uri != null) {
+			logger.info("uri = "+uri );
+			arg = uri;
+		} else {
+			arg = "";			
+		}
+		
+		Song song = null;
+		try {
+			song = search.getSongDetails(arg);
+		} catch (Exception e) {
+			logger.error("caught exception in detail()"+e.toString() );
+		}
+
+		model.addAttribute("song", song);
+		// set the display mode for the JSP  
+		model.addAttribute("mode", "detail");
+		
+		return "search";
+	}
+	/**
+	 * serves images from MarkLogic
+	 */
+	@RequestMapping("image")	
+	public void serveImage(@RequestParam(required=true, value="uri") String uri, HttpServletResponse response) {
+		
+		logger.info("serving  image "+ uri);
+		
+		InputStream is = search.serveImage(uri);
+	    // copy it to response's OutputStream
+	    try {
+			IOUtils.copy(is, response.getOutputStream());
+			//response.setContentType("application/jpeg"); 
+			response.flushBuffer();
+		} catch (IOException e) {
+		      logger.info("Error writing image to output stream. Filename was '" + uri + "'");
+		      throw new RuntimeException("IOError writing image to output stream");
+		}
+
 	}
 
 	/**
@@ -84,7 +142,7 @@ public class SearchController {
 		
 		return "search";
 	}
-	
+	 
 	/*
 	 * create the MarkLogic Database connection
 	 */

@@ -1,13 +1,22 @@
 package com.marklogic.training;
 
 
+import java.io.InputStream;
+import java.io.StringWriter;
+
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
+import com.marklogic.client.document.BinaryDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.example.handle.JDOMHandle;
 import com.marklogic.client.io.DOMHandle;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
@@ -66,8 +75,12 @@ public class Search {
 		Song[] songs = new Song[docSummaries.length];
 		int i = 0;
 		for (MatchDocumentSummary docSummary: docSummaries) {
+			
 			// read constituent documents
-			Song song = readSong(docSummary.getUri() );
+			// read the document from the db and pass back the DOM for that doc.
+			Document doc = getDOMDocument(docSummary.getUri());
+
+			Song song = buildSong(docSummary.getUri(), doc );
 			songs[i] = song;
 			i++;
 		}
@@ -75,16 +88,79 @@ public class Search {
 		return songs;
 		
 	}
+	/*
+	 * retrieve the details for one song
+	 */
+	public Song getSongDetails(String uri) {
+		return buildSongFullDetails(uri);
+	}
+	/*
+	 * serve images from MarkLogic
+	 */
+	public InputStream serveImage(String uri) {
+		
+		// Read Document into an InputStream
+		// create  handle
+		InputStreamHandle handle = new InputStreamHandle();  
+
+		try {				
+			// create a manager for binary documents
+			BinaryDocumentManager docMgr = conn.getClient().newBinaryDocumentManager();			
+			
+			// read document
+			docMgr.read(uri,handle);
+			// output the string
+			logger.info("loaded binary document from db  - mimetype" + handle.getMimetype() );
+				  
+		} catch (Exception e) {
+			logger.error("Exception : " + e.toString() );
+		} 
+		return  handle.get();
+	}
 	public void stop() {
 		logger.info("releasing MarkLogic Search...");
 		if (conn != null) {
 			conn.release();			
 		}
 	}  
-	
-	private Song readSong(String uri) {
-		// create the POJO
-		Song song = new Song();
+	private Song buildSongFullDetails(String uri) {
+
+		// read the document from the db and pass back the DOM for that doc.
+		Document doc = getDOMDocument(uri);
+		
+		// build the display details for a song
+		Song song = buildSong(uri,doc);
+		
+		song.setAlbum(SongHelper.getTagValue("album", doc));
+		logger.info(" Song album " + song.getAlbum() );
+		
+		song.setLabel(SongHelper.getTagValue("label", doc));
+		logger.info(" Song label " + song.getLabel() );
+		
+		song.setWriters(SongHelper.get2ndLevelChildren("writers", doc));
+		logger.info(" Song writers " + song.getWriters() );
+		
+		song.setProducers(SongHelper.get2ndLevelChildren("producers", doc));
+		logger.info(" Song producers " + song.getProducers() );
+		
+		song.setFormats(SongHelper.get2ndLevelChildren("formats", doc));
+		logger.info(" Song formats " + song.getFormats() );
+		
+		song.setLengths(SongHelper.get2ndLevelChildren("lengths", doc));
+		logger.info(" Song lengths " + song.getLengths() );
+		
+		song.setDescription(SongHelper.getSongDescription(doc,99999)); 
+		logger.info(" Song description " + song.getDescription() );
+
+		song.setWeeks(SongHelper.get2ndLevelChildren("weeks", doc));
+		logger.info(" Song actual weeks at #1 " + song.getWeeks() );
+		
+		song.setAlbumimage(SongHelper.getAlbumURI(doc));
+		logger.info(" Song album image uri " + song.getAlbumimage() );
+		
+		return song;
+	}
+	private Document getDOMDocument(String uri) {
 		// set up the read
 		XMLDocumentManager docMgr = conn.getClient().newXMLDocumentManager();
 		// create the handle
@@ -92,12 +168,13 @@ public class Search {
 		// read the document into the handle
 		logger.info("About to read document "+uri);
 		docMgr.read(uri, readHandle);
-		// access the document content
-		Document doc = readHandle.get();
-		// get the root element (top-songs)
-		String rootName = doc.getDocumentElement().getNodeName();
-		String ns = doc.getBaseURI();
-		logger.info("Root elememt "+ns+":"+rootName);
+		// access and return the document content
+		return readHandle.get();
+		
+	}
+	private Song buildSong(String uri, Document doc) {
+		// create the POJO
+		Song song = new Song();
 		
 		song.setTitle(SongHelper.getTagValue("title", doc));
 		logger.info("song title is " + song.getTitle() );
@@ -116,10 +193,10 @@ public class Search {
 
 		song.setTotalweeks(SongHelper.getNumberOfWeeks(doc));
 		logger.info(" number of weeks at #1 was " + song.getTotalweeks() );
-
-		song.setDescription(SongHelper.getSongDescription(doc,70)); 
-		logger.info(" Song description " + song.getDescription() );
 		
+		song.setDescription(SongHelper.getSongDescription(doc,40)); 
+		logger.info(" Song description " + song.getDescription() );
+
 		return song; 
 	}
 	/**

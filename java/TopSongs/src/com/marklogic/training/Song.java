@@ -20,7 +20,14 @@ public class Song {
 	private String weekending = null;
 	private long totalweeks = 0;
 	private String description = null;
-
+	private String album = null;
+	private String label = null;
+	private String writers = null;
+	private String producers = null;
+	private String formats = null;
+	private String lengths = null;
+	private String weeks = null;
+	private String albumimage = null;
 	
 	public String getTitle() {
 		return title;
@@ -81,14 +88,61 @@ public class Song {
 	public void setDescription(String description ) {
 		this.description = description;
 	}
+	public String getAlbum() {
+		return album;
+	}
+	public void setAlbum(String album ) {
+		this.album = album;
+	}
 	
-	
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	public String getLabel() {
+		return label;
+	}
+	public void setLabel(String label ) {
+		this.label = label;
+	}
+	public String getWriters() {
+		return writers;
+	}
+	public void setWriters(String writers ) {
+		this.writers = writers;
+	}
+	public String getProducers() {
+		return producers;
+	}
+	public void setProducers(String producers ) {
+		this.producers = producers;
+	}
+	public String getFormats() {
+		return formats;
+	}
+	public void setFormats(String formats ) {
+		this.formats = formats;
+	}
+	public String getLengths() {
+		return lengths;
+	}
+	public void setLengths(String lengths ) {
+		this.lengths = lengths;
+	}
+	public String getWeeks() {
+		return weeks;
+	}
+	public void setWeeks(String weeks ) {
+		this.weeks = weeks;
+	}
+	public String getAlbumimage() {
+		return albumimage;
+	}
+	public void setAlbumimage(String albumimage ) {
+		String encoding = "UTF-8";
+		try {
+			this.albumimage = URLEncoder.encode(albumimage,encoding);
+		} catch (UnsupportedEncodingException e) {
+			logger.error("could not URL encode album art uri " + albumimage + "to " + encoding + " exception caught " + e.toString());
+			this.albumimage = albumimage;
+		}
+				
 	}
 
 }

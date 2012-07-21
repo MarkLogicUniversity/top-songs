@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@	taglib	uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 				
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -23,23 +24,67 @@
 <div id="rightcol">
   <form name="form1" method="get" action="search" id="form1">
   <div id="searchdiv">
-    <input type="text" name="q" id="q" size="55"/><button type="button" id="reset_button" onclick="document.getElementById('bday').value = ''; document.getElementById('q').value = ''; document.location.href='search.html'">x</button>&#160;
+    <input type="text" name="q" id="q" size="55" value="${param.q}" />
+    <button type="button" id="reset_button" onclick="document.getElementById('bday').value = ''; document.getElementById('q').value = ''; document.location.href='search.html'">x</button>&#160;
     <input style="border:0; width:0; height:0; background-color: #A7C030" type="text" size="0" maxlength="0"/><input type="submit" id="submitbtn" name="submitbtn" value="search"/>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<a href="advanced.html">advanced search</a>
   </div>
   <div id="detaildiv">
-  
+  <c:if test="${mode =='list'}" >
      <c:forEach items="${songs}" var="song">
       <div>
          <div class="songname">"${song.title}" by ${song.artist}</div>
          <div class="week"> ending week: ${song.weekending} 
-            (total weeks: ${song.totalweeks})</div>    
-         <div class="genre">genre: ${song.genres}</div>
+            (total weeks: ${song.totalweeks})</div> 
+            
+	         <c:if test="${song.genres!=''}">
+	         	<div class="genre">genre: ${song.genres}</div>
+			 </c:if>   
+         
          <div class="description">${song.description} ...&#160;
-            <a href="search/detail?uri=${song.uri}">[more]</a>
+            <a href="detail.html?uri=${song.uri}">[more]</a>
          </div>
       </div>
 	</c:forEach>
-	
+	<c:if test="${fn:length(songs) eq 0}">
+	       <div> Sorry, no results for your search. <br/><br/><br/></div>
+	</c:if>   
+  </c:if>
+  <c:if test="${mode =='detail'}" >
+   <div>
+    <div class="songnamelarge">"${song.title}"</div>
+    <c:if test="${song.albumimage !='' }" >
+    	<div class="albumimage"><img src="image?uri=${song.albumimage}"/></div>
+    </c:if> 
+    <div class="detailitem">#1 weeks: ${song.totalweeks}</div>  
+    <div class="detailitem">weeks: ${song.weeks} </div> 
+    <c:if test="${song.genres !='' }" >
+    	<div class="detailitem">genre: ${song.genres}</div>
+    </c:if> 
+    <c:if test="${song.artist !='' }" >
+    	<div class="detailitem">artist: ${song.artist}</div>
+    </c:if> 
+    <c:if test="${song.writers !='' }" >
+    	<div class="detailitem">writers: ${song.writers}</div>
+    </c:if> 
+    <c:if test="${song.producers !='' }" >
+    	<div class="detailitem">producers: ${song.producers}</div>
+    </c:if> 
+    <c:if test="${song.label !='' }" >
+    	<div class="detailitem">label: ${song.label}</div>
+    </c:if> 
+    <c:if test="${song.formats !='' }" >
+    	<div class="detailitem">formats: ${song.formats}</div>
+    </c:if> 
+    <c:if test="${song.lengths !='' }" >
+    	<div class="detailitem">lengths: ${song.lengths}</div>
+    </c:if> 
+    <c:if test="${song.description !='' }" >
+    	<div class="detailitem">${song.description}</div>
+    </c:if> 
+   </div>
+  
+  </c:if>
+  
   </div>
   </form>
 </div>
