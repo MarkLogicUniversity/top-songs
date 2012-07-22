@@ -40,8 +40,20 @@
 	         	<div class="genre">genre: ${song.genres}</div>
 			 </c:if>   
          
-         <div class="description">${song.description} ...&#160;
+         <div class="description">
+         	<c:forEach items="${song.snippets}" var="snippet" >
+         		<c:choose >
+         			<c:when test="${snippet.ishighlighted}" >
+         				<span class="highlight">${snippet.text}</span>
+         			</c:when>
+         			<c:otherwise>
+         				${snippet.text}
+         			</c:otherwise>  		
+         		</c:choose>
+            </c:forEach>
+            &#160;
             <a href="detail.html?uri=${song.uri}">[more]</a>
+
          </div>
       </div>
 	</c:forEach>

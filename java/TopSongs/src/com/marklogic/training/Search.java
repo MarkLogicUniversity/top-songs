@@ -2,22 +2,21 @@ package com.marklogic.training;
 
 
 import java.io.InputStream;
-import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.marklogic.client.document.BinaryDocumentManager;
 import com.marklogic.client.document.XMLDocumentManager;
-import com.marklogic.client.example.handle.JDOMHandle;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.SearchHandle;
-import com.marklogic.client.io.StringHandle;
 import com.marklogic.client.query.MatchDocumentSummary;
+import com.marklogic.client.query.MatchLocation;
+import com.marklogic.client.query.MatchSnippet;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 
@@ -26,7 +25,7 @@ import com.marklogic.client.query.StringQueryDefinition;
  */
 public class Search {
 
-	private static final String OPTIONS_NAME = "basic-options";
+	private static final String OPTIONS_NAME = "full-options";
 	private static final Logger logger = LoggerFactory.getLogger(Search.class);
 	private static MarkLogicConnection conn = null;
 	
@@ -76,11 +75,44 @@ public class Search {
 		int i = 0;
 		for (MatchDocumentSummary docSummary: docSummaries) {
 			
+			MatchLocation[] matches = docSummary.getMatchLocations();
+			
+			
+			List<Snippet> snippetList = new ArrayList<Snippet>();
+			
+			for (MatchLocation match: matches) {
+				
+				MatchSnippet[] snippets = match.getSnippets();
+				
+				for (MatchSnippet snippet: snippets) {
+					
+					snippetList.add(new Snippet(snippet.getText(), snippet.isHighlighted()) );
+					
+					logger.info(" snippet text is "+(snippet.isHighlighted()?" highlighted ":" NOT highlighted ")+" text value: "+snippet.getText());
+				}
+				
+			}
+			
+			logger.info("gathered number of snippets = "+snippetList.size());
+			Object[] objs = snippetList.toArray();
+			Snippet[] snips = new Snippet[objs.length];
+			for (int k=0; k<objs.length; k++) {
+				if (objs[k] instanceof Snippet ) {
+					snips[k] = (Snippet) objs[k];
+				} else {
+					logger.error("cast from Object to Snippet not fucking worky");
+				}
+			}
+
+			
 			// read constituent documents
 			// read the document from the db and pass back the DOM for that doc.
 			Document doc = getDOMDocument(docSummary.getUri());
 
 			Song song = buildSong(docSummary.getUri(), doc );
+			logger.info("about to set snippets in song ");
+
+			song.setSnippets(snips);
 			songs[i] = song;
 			i++;
 		}
@@ -132,31 +164,31 @@ public class Search {
 		Song song = buildSong(uri,doc);
 		
 		song.setAlbum(SongHelper.getTagValue("album", doc));
-		logger.info(" Song album " + song.getAlbum() );
+		logger.debug(" Song album " + song.getAlbum() );
 		
 		song.setLabel(SongHelper.getTagValue("label", doc));
-		logger.info(" Song label " + song.getLabel() );
+		logger.debug(" Song label " + song.getLabel() );
 		
 		song.setWriters(SongHelper.get2ndLevelChildren("writers", doc));
-		logger.info(" Song writers " + song.getWriters() );
+		logger.debug(" Song writers " + song.getWriters() );
 		
 		song.setProducers(SongHelper.get2ndLevelChildren("producers", doc));
-		logger.info(" Song producers " + song.getProducers() );
+		logger.debug(" Song producers " + song.getProducers() );
 		
 		song.setFormats(SongHelper.get2ndLevelChildren("formats", doc));
-		logger.info(" Song formats " + song.getFormats() );
+		logger.debug(" Song formats " + song.getFormats() );
 		
 		song.setLengths(SongHelper.get2ndLevelChildren("lengths", doc));
-		logger.info(" Song lengths " + song.getLengths() );
+		logger.debug(" Song lengths " + song.getLengths() );
 		
 		song.setDescription(SongHelper.getSongDescription(doc,99999)); 
-		logger.info(" Song description " + song.getDescription() );
+		logger.debug(" Song description " + song.getDescription() );
 
 		song.setWeeks(SongHelper.get2ndLevelChildren("weeks", doc));
-		logger.info(" Song actual weeks at #1 " + song.getWeeks() );
+		logger.debug(" Song actual weeks at #1 " + song.getWeeks() );
 		
 		song.setAlbumimage(SongHelper.getAlbumURI(doc));
-		logger.info(" Song album image uri " + song.getAlbumimage() );
+		logger.debug(" Song album image uri " + song.getAlbumimage() );
 		
 		return song;
 	}
@@ -166,7 +198,7 @@ public class Search {
 		// create the handle
 		DOMHandle readHandle = new DOMHandle();
 		// read the document into the handle
-		logger.info("About to read document "+uri);
+		logger.debug("About to read document "+uri);
 		docMgr.read(uri, readHandle);
 		// access and return the document content
 		return readHandle.get();
@@ -177,25 +209,25 @@ public class Search {
 		Song song = new Song();
 		
 		song.setTitle(SongHelper.getTagValue("title", doc));
-		logger.info("song title is " + song.getTitle() );
+		logger.debug("song title is " + song.getTitle() );
 
 		song.setArtist(SongHelper.getTagValue("artist", doc));
-		logger.info("song artist is " + song.getArtist() );
+		logger.debug("song artist is " + song.getArtist() );
 
 		song.setUri(uri);
-		logger.info("song uri is " + song.getPlainTextUri() );
+		logger.debug("song uri is " + song.getPlainTextUri() );
 		
 		song.setGenres(SongHelper.getGenres(doc));
-		logger.info("song genres is/are " + song.getGenres() );
+		logger.debug("song genres is/are " + song.getGenres() );
 		 
 		song.setWeekending(SongHelper.getWeekLastAttr(doc));
-		logger.info("song last week in charts was " + song.getWeekending() );
+		logger.debug("song last week in charts was " + song.getWeekending() );
 
 		song.setTotalweeks(SongHelper.getNumberOfWeeks(doc));
-		logger.info(" number of weeks at #1 was " + song.getTotalweeks() );
+		logger.debug(" number of weeks at #1 was " + song.getTotalweeks() );
 		
 		song.setDescription(SongHelper.getSongDescription(doc,40)); 
-		logger.info(" Song description " + song.getDescription() );
+		logger.debug(" Song description " + song.getDescription() );
 
 		return song; 
 	}

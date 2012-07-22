@@ -28,6 +28,7 @@ public class Song {
 	private String lengths = null;
 	private String weeks = null;
 	private String albumimage = null;
+	private Snippet[] snippets = null;
 	
 	public String getTitle() {
 		return title;
@@ -143,6 +144,12 @@ public class Song {
 			this.albumimage = albumimage;
 		}
 				
+	}
+	public Snippet[] getSnippets() {
+		return snippets;
+	}
+	public void setSnippets(Snippet[] snips) {
+		this.snippets = snips;
 	}
 
 }

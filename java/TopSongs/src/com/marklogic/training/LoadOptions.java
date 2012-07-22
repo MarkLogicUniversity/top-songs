@@ -15,8 +15,10 @@ import com.marklogic.client.io.QueryOptionsHandle;
 public class LoadOptions {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoadOptions.class);
-	private static final String OPTIONS_NAME = "basic-options";
-	private static final String OPTIONS_FILENAME = "data/query-options-basic.xml";
+	//private static final String OPTIONS_NAME = "full-options";
+	//private static final String OPTIONS_NAME = "full-options";
+	private static final String OPTIONS_NAME = "advanced-options";
+	private static final String OPTIONS_FILENAME = "data/query-options-genre.xml";
 	private static final int BUFFER_SIZE = 32*1024;
 	
 
