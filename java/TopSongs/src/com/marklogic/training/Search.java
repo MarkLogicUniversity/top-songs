@@ -94,16 +94,8 @@ public class Search {
 			}
 			
 			logger.info("gathered number of snippets = "+snippetList.size());
-			Object[] objs = snippetList.toArray();
-			Snippet[] snips = new Snippet[objs.length];
-			for (int k=0; k<objs.length; k++) {
-				if (objs[k] instanceof Snippet ) {
-					snips[k] = (Snippet) objs[k];
-				} else {
-					logger.error("cast from Object to Snippet not fucking worky");
-				}
-			}
-
+			Snippet[] snips = new Snippet[snippetList.size()];
+			snippetList.toArray(snips);
 			
 			// read constituent documents
 			// read the document from the db and pass back the DOM for that doc.
