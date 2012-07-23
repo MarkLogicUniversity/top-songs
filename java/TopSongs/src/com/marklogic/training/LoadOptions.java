@@ -1,8 +1,5 @@
 package com.marklogic.training;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.slf4j.Logger;
@@ -10,20 +7,25 @@ import org.slf4j.LoggerFactory;
 
 import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.config.QueryOptions.QueryTransformResults;
+import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsHandle;
 
 public class LoadOptions {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoadOptions.class);
 	//private static final String OPTIONS_NAME = "full-options";
-	//private static final String OPTIONS_NAME = "full-options";
-	private static final String OPTIONS_NAME = "advanced-options";
-	private static final String OPTIONS_FILENAME = "data/query-options-genre.xml";
-	private static final int BUFFER_SIZE = 32*1024;
-	
+	private static final String OPTIONS_NAME = "full-options";
+	//private static final String OPTIONS_NAME = "advanced-options";
+	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";	
 
+	/*
+	 * Important to note that when reading options from a file you can use any normal handle - there is no need to use the QueryOptionsHandle.
+	 * Just need to make sure that the QueryOptionsManager is used to write it to the database.
+	 */
 	public static void load(boolean isSourceFile) {
 		try {
+			// we are using admin-role credentials in order to write new query options
+			// (note the properties filename)
 			MarkLogicConnection conn =  MarkLogicConnection.getInstance("data/marklogic-admin.properties");
 			
 			try {
@@ -32,19 +34,20 @@ public class LoadOptions {
 				// create a manager for writing query options
 				QueryOptionsManager optionsMgr = conn.getClient().newServerConfigManager().newQueryOptionsManager();
 
-				QueryOptionsHandle handle = null;
 				if (isSourceFile) {
 				    // build options - FROM FILE
 					logger.info("set handle from byte[]");
-					handle = readOptionsFromFile();
+					InputStreamHandle ish = readOptionsFromFile();
+					logger.info("write following options to db :\n"+ish.toString());				
+					optionsMgr.writeOptions(OPTIONS_NAME, ish);	
+
 				} else {
 					// build options - FROM CODE
-					 handle = buildOptionsInCode();		
+					QueryOptionsHandle qoh = buildOptionsInCode();
+					logger.info("write to db");				
+					optionsMgr.writeOptions(OPTIONS_NAME, qoh);						
 				}
 
-				logger.info("write to db");				
-				// write them to the db
-				optionsMgr.writeOptions(OPTIONS_NAME, handle);				
 				
 				logger.info("wrote options to db");
 				
@@ -81,7 +84,7 @@ public class LoadOptions {
 	
 		return handle;
 	}
-	private static QueryOptionsHandle readOptionsFromFile() {
+	private static InputStreamHandle readOptionsFromFile() {
 		InputStream optsStream = null;
 		try {
 			optsStream = LoadOptions.class.getClassLoader().getResourceAsStream(OPTIONS_FILENAME);
@@ -90,34 +93,10 @@ public class LoadOptions {
 		}
 		if (optsStream == null)
 			throw new RuntimeException("Could not read marklogic search options in " + OPTIONS_FILENAME);
-		
-	    int len;
-	    //HATEME fixed size, nasty, set to 32K though, that's funny right there.
-	    // there's got to be an easier way to do this.
-	    int size = BUFFER_SIZE;
-	    byte[] buf;
 
-	    try {
-			if (optsStream instanceof ByteArrayInputStream) {
-				logger.info("stream is a ByteArrayInputStream");
-			    size = optsStream.available();
-			    buf = new byte[size];
-			    len = optsStream.read(buf, 0, size);
-			} else {
-				logger.info("stream is NOT a ByteArrayInputStream");
-			    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			    buf = new byte[size];
-			    while ((len = optsStream.read(buf, 0, size)) != -1)
-			    	bos.write(buf, 0, len);
-			    buf = bos.toByteArray();
-			}
-		} catch (IOException e) {
-			logger.error("failed to read options from file - caught exception "+e.toString());
-			throw new RuntimeException(e);
-		}
-	    QueryOptionsHandle qoh = new QueryOptionsHandle();
-	    qoh.fromBuffer(buf);
-	    return qoh;
+		InputStreamHandle ish = new InputStreamHandle(optsStream);
+		
+	    return ish;
 		
 	}
 	/**

@@ -24,10 +24,26 @@
 <div id="rightcol">
   <form name="form1" method="get" action="search" id="form1">
   <div id="searchdiv">
-    <input type="text" name="q" id="q" size="55" value="${param.q}" />
+    <input type="text" name="q" id="q" size="55" value="${query.parameter}" />
     <button type="button" id="reset_button" onclick="document.getElementById('bday').value = ''; document.getElementById('q').value = ''; document.location.href='search.html'">x</button>&#160;
-    <input style="border:0; width:0; height:0; background-color: #A7C030" type="text" size="0" maxlength="0"/><input type="submit" id="submitbtn" name="submitbtn" value="search"/>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<a href="advanced.html">advanced search</a>
+    <input style="border:0; width:0; height:0; background-color: #A7C030" type="text" size="0" maxlength="0"/><input type="submit" id="submitbtn" name="submitbtn" value="search"/>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
+    		<a href="advanced.html">advanced search</a>
   </div>
+  <div id="detaildiv">
+<div id="countdiv" xmlns=""><b>1</b> to <b>10</b> of 56</div>
+<div id="sortbydiv" xmlns="">
+             sort by: 
+<select name="sortby" id="sortby" onchange="this.form.submit()">
+	<c:forEach items="${sortoptions}" var="sortoption" >
+		 <option value="${sortoption.option}"
+			<c:if test="${sortoption.selected}" >
+		 			selected="true"
+		 	</c:if>
+		 	>${sortoption.option}</option>
+	</c:forEach>
+ 
+</select>
+</div>
   <div id="detaildiv">
   <c:if test="${mode =='list'}" >
      <c:forEach items="${songs}" var="song">

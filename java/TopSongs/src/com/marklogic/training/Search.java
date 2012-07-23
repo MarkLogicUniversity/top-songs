@@ -14,6 +14,8 @@ import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.DOMHandle;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.SearchHandle;
+import com.marklogic.client.query.FacetResult;
+import com.marklogic.client.query.FacetValue;
 import com.marklogic.client.query.MatchDocumentSummary;
 import com.marklogic.client.query.MatchLocation;
 import com.marklogic.client.query.MatchSnippet;
@@ -70,14 +72,23 @@ public class Search {
 
 		// iterate over the result documents
 		MatchDocumentSummary[] docSummaries = resultsHandle.getMatchResults();
-		logger.info("Listing "+docSummaries.length+" documents:\n");
+		logger.info("Listing "+docSummaries.length+" documents");
+		String[] facetNames = resultsHandle.getFacetNames();
+		logger.info("returned data on "+facetNames.length+" facets "+facetNames[0] );
+		FacetResult[] facetResults = resultsHandle.getFacetResults();
+		for (FacetResult facetResult: facetResults) {
+			logger.info(" Results for facet "+facetResult.getName());
+			FacetValue[] facetValues = facetResult.getFacetValues();
+			for (FacetValue facetValue: facetValues) {
+				logger.debug(" Facet Value Label:"+facetValue.getLabel()+" Name:"+facetValue.getName()+" Count:"+facetValue.getCount());
+			}
+		}
 		Song[] songs = new Song[docSummaries.length];
 		int i = 0;
 		for (MatchDocumentSummary docSummary: docSummaries) {
 			
 			MatchLocation[] matches = docSummary.getMatchLocations();
-			
-			
+					
 			List<Snippet> snippetList = new ArrayList<Snippet>();
 			
 			for (MatchLocation match: matches) {
@@ -88,12 +99,12 @@ public class Search {
 					
 					snippetList.add(new Snippet(snippet.getText(), snippet.isHighlighted()) );
 					
-					logger.info(" snippet text is "+(snippet.isHighlighted()?" highlighted ":" NOT highlighted ")+" text value: "+snippet.getText());
+					logger.debug(" snippet text is "+(snippet.isHighlighted()?" highlighted ":" NOT highlighted ")+" text value: "+snippet.getText());
 				}
 				
 			}
 			
-			logger.info("gathered number of snippets = "+snippetList.size());
+			logger.debug("gathered number of snippets = "+snippetList.size());
 			Snippet[] snips = new Snippet[snippetList.size()];
 			snippetList.toArray(snips);
 			
@@ -102,7 +113,7 @@ public class Search {
 			Document doc = getDOMDocument(docSummary.getUri());
 
 			Song song = buildSong(docSummary.getUri(), doc );
-			logger.info("about to set snippets in song ");
+			logger.debug("about to set snippets in song ");
 
 			song.setSnippets(snips);
 			songs[i] = song;
