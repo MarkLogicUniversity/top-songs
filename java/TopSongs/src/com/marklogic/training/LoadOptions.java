@@ -9,6 +9,7 @@ import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.config.QueryOptions.QueryTransformResults;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsHandle;
+import com.marklogic.client.io.StringHandle;
 
 public class LoadOptions {
 	
@@ -52,12 +53,12 @@ public class LoadOptions {
 				logger.info("wrote options to db");
 				
 				// create a handle to receive the query options
-				QueryOptionsHandle readHandle = new QueryOptionsHandle();
+				StringHandle readHandle = new StringHandle();
 
 				// read the query options from the database
 				optionsMgr.readOptions(OPTIONS_NAME, readHandle);
 				
-				logger.info("Search Options" +" named "+ OPTIONS_NAME + " : \n" + readHandle.toXMLString());
+				logger.info("Search Options" +" named "+ OPTIONS_NAME + " : \n" + readHandle.get());
 
 			} catch (Exception e) {
 				logger.error("Exception : " + e.toString() );

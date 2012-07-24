@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.model;
 
 public class Query {
 	public String getParameter() {

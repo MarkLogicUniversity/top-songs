@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.model;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -6,6 +6,7 @@ import java.net.URLEncoder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class Song {
 
@@ -29,6 +30,8 @@ public class Song {
 	private String weeks = null;
 	private String albumimage = null;
 	private Snippet[] snippets = null;
+	private FacetDetails[] facets = null;
+	private String facetname = null;
 	
 	public String getTitle() {
 		return title;
@@ -150,6 +153,18 @@ public class Song {
 	}
 	public void setSnippets(Snippet[] snips) {
 		this.snippets = snips;
+	}
+	public FacetDetails[] getFacets() {
+		return facets;
+	}
+	public void setFacets(FacetDetails[] facets) {
+		this.facets = facets;
+	}
+	public String getFacetname() {
+		return facetname;
+	}
+	public void setFacetname(String facetname ) {
+		this.facetname = facetname;
 	}
 
 }

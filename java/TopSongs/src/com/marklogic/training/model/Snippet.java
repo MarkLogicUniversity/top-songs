@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.model;
 /*
  * snippeting information to presentation layer
  */

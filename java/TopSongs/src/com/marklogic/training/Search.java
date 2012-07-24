@@ -22,6 +22,12 @@ import com.marklogic.client.query.MatchSnippet;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 
+import com.marklogic.training.model.Facet;
+import com.marklogic.training.model.SearchResults;
+import com.marklogic.training.model.Snippet;
+import com.marklogic.training.model.Song;
+import com.marklogic.training.model.FacetDetails;
+
 /*
  * this class encapsulates the MarkLogic Search API
  */
@@ -45,7 +51,7 @@ public class Search {
 	 * 3. parse the results into a tree
 	 * 4. create a POJO with the results for processing in the view.
 	 */
-	public Song[] search(String arg) {
+	public SearchResults search(String arg) {
 		
 		logger.info("Performing search() with arg = "+(arg == ""?" EMPTY_STRING":arg) );
 		
@@ -70,19 +76,42 @@ public class Search {
 		logger.info("Matched "+resultsHandle.getTotalResults()+
 				" documents with '"+querydef.getCriteria()+"'\n");
 
-		// iterate over the result documents
-		MatchDocumentSummary[] docSummaries = resultsHandle.getMatchResults();
-		logger.info("Listing "+docSummaries.length+" documents");
-		String[] facetNames = resultsHandle.getFacetNames();
-		logger.info("returned data on "+facetNames.length+" facets "+facetNames[0] );
-		FacetResult[] facetResults = resultsHandle.getFacetResults();
+		List<Facet> fl = new ArrayList<Facet>();
+		// retrieve facet results from search client
+		FacetResult[] facetResults = resultsHandle.getFacetResults();	
+		logger.info("returned data on "+facetResults.length+" facets " );
+		
 		for (FacetResult facetResult: facetResults) {
-			logger.info(" Results for facet "+facetResult.getName());
+
+			List<FacetDetails> fdl = new ArrayList<FacetDetails>();
+
+			String facetName = facetResult.getName();
+			logger.info(" Results for facet "+facetName);
+			
 			FacetValue[] facetValues = facetResult.getFacetValues();
 			for (FacetValue facetValue: facetValues) {
 				logger.debug(" Facet Value Label:"+facetValue.getLabel()+" Name:"+facetValue.getName()+" Count:"+facetValue.getCount());
+				// now create and fill the model FacetDetails type
+				FacetDetails values = new FacetDetails( facetValue.getName(),facetValue.getCount() );
+				fdl.add(values);
 			}
+			// now create and fill the model array of facet details
+			FacetDetails[] facetDetails = new FacetDetails[fdl.size()];
+			fdl.toArray(facetDetails);
+			Facet f = new Facet(facetDetails, facetName);
+			fl.add(f);
+
+			
 		}
+		// create the model object Facet to contain the FacetResults
+		Facet[] facets = new Facet[fl.size()];
+		fl.toArray(facets);
+
+
+		// all matched documents
+		MatchDocumentSummary[] docSummaries = resultsHandle.getMatchResults();
+		logger.info("Listing "+docSummaries.length+" documents");
+		
 		Song[] songs = new Song[docSummaries.length];
 		int i = 0;
 		for (MatchDocumentSummary docSummary: docSummaries) {
@@ -116,11 +145,13 @@ public class Search {
 			logger.debug("about to set snippets in song ");
 
 			song.setSnippets(snips);
+			//song.setFacets(facets);
+			//song.setFacetname(facetName);
 			songs[i] = song;
 			i++;
 		}
-
-		return songs;
+		SearchResults results = new SearchResults(facets, songs);
+		return results;
 		
 	}
 	/*

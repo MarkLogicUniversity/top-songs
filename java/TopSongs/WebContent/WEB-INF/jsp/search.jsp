@@ -11,8 +11,23 @@
 <div id="wrapper">
 <div id="header"><a href="search.html"><img src="resources/images/banner.jpg" width="918" height="153" border="0"/></a></div>
 <div id="leftcol">
-  <img src="resources/images/checkblank.gif"/>facet content here<br />
-  <br />
+
+    
+  <img src="resources/images/checkblank.gif"/> 
+  <div class="facet">
+	<c:forEach items="${results.facets}" var="facet">
+       <div class="purplesubheading"><img src="resources/images/checkblank.gif"/><c:out value="${facet.name}"/></div>
+       <c:forEach items="${facet.facetvalues}" var="facetvalue" >
+       		<c:if test="${facetvalue.name !=''}" >
+       		  <div class="facet-value">
+       			<a href=""><c:out value="${fn:toLowerCase(facetvalue.name)}"/></a> <c:out value="${facetvalue.count}" />
+       		  </div>			
+       		</c:if>
+   		</c:forEach>
+  	</c:forEach> 
+  	<br /><br />
+  </div>
+  
   <div class="purplesubheading"><img src="resources/images/checkblank.gif"/>check your birthday!</div>
   <form name="formbday" method="get" action="bday.html" id="formbday">
     <img src="resources/images/checkblank.gif" width="7"/>
@@ -46,7 +61,7 @@
 </div>
   <div id="detaildiv">
   <c:if test="${mode =='list'}" >
-     <c:forEach items="${songs}" var="song">
+     <c:forEach items="${results.songs}" var="song">
       <div>
          <div class="songname">"${song.title}" by ${song.artist}</div>
          <div class="week"> ending week: ${song.weekending} 

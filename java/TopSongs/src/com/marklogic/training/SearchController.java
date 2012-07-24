@@ -20,6 +20,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.marklogic.training.model.Query;
+import com.marklogic.training.model.SearchResults;
+import com.marklogic.training.model.Song;
+
 @Controller
 @RequestMapping("/search")
 public class SearchController {
@@ -47,12 +51,12 @@ public class SearchController {
 		
 		Sortoptions[] options = fillSortbyOptions(arg);
 		
-		Song[] songs = null;
+		SearchResults results = null;
 		Query query = new Query();
 		query.setParameter(arg);
 		try {
 			 
-			songs = search.search(arg);
+			results = search.search(arg);
 			
 		} catch (Exception e ) {
 			logger.error("caught exception in search()"+e.toString() );
@@ -62,10 +66,9 @@ public class SearchController {
 		// set the display mode for the JSP  
 		model.addAttribute("mode", "list");
 		// add the display data objects for processing in the JSP
-		model.addAttribute("songs", songs);
+		model.addAttribute("results", results);
 		model.addAttribute("query", query);
 		model.addAttribute("sortoptions", options);
-
 		
 		return "search";
 	}
@@ -190,11 +193,10 @@ public class SearchController {
 	private static String processInput(String q, String button, String sortby) {
 		
 		if (q == null) {
-			q = "sort:relevance";
 			logger.info("q was null");
 		} else if (q == "") {
 			logger.info("q was "+q);
-			q = "sort:relevance";
+			q = "sort:newest";
 		}
 		if (button == null) {
 			logger.info("button was null");
@@ -209,6 +211,12 @@ public class SearchController {
 			logger.info("sortby was "+sortby);
 		
 		}
+		if ( (button == null) && (sortby == null) && (q == null) ) {
+			logger.info("everything null");
+			q = "sort:newest";
+			return q;
+		}
+		
 		/*
 		 * test to see whether
 		 * 1. sortby dropdown has been selected
@@ -222,25 +230,25 @@ public class SearchController {
 			// or to replace any residual sort option in the search
 			// box with the value of sortby
 			if (isSortOptionPresent(q)) {
-				logger.info(" sort argument found");
+				logger.info(" sortby set: sort argument found");
 				sort = replaceSortOptions(q,sortby);
 				
 				
 			} else {
 				// insert default sort option
-				logger.info("No sort argument found");
+				logger.info("sortby set: No sort argument found");
 				sort = insertSortOptions(q, sortby);
 			}
 
 		} else {
 			// extract the sort query out of q
 			if (isSortOptionPresent(q)) {
-				logger.info(" sort argument found");
+				logger.info("sort in search arg: sort argument found");
 				sort = q;
 				
 			} else {
 				// insert default sort option
-				logger.info("No sort argument found");
+				logger.info("sort in search arg: No sort argument found");
 				sort = insertSortOptions(q, "relevance");
 			}
 			
@@ -264,7 +272,7 @@ public class SearchController {
 				// offset of last char in string
 				int y = tokens[i].length();
 
-				//record the sort type with a lookahead
+				//extract the sort type 
 				sorts.add(tokens[i].substring(x, y));
 			}
 		}
