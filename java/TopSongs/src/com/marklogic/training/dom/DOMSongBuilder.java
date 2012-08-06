@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.dom;
 
 import java.io.StringWriter;
 
@@ -17,11 +17,108 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class SongHelper {
-	
-	private static final Logger logger = LoggerFactory.getLogger(SongHelper.class);
+import com.marklogic.client.document.XMLDocumentManager;
+import com.marklogic.client.io.DOMHandle;
+import com.marklogic.training.MarkLogicConnection;
+import com.marklogic.training.SongBuilder;
+import com.marklogic.training.model.Song;
 
-	public static String getTagValue(String tagName,Document doc) {
+public class DOMSongBuilder implements SongBuilder {
+
+	private MarkLogicConnection conn = null;
+	
+	private static final Logger logger = LoggerFactory.getLogger(DOMSongBuilder.class);
+
+	public DOMSongBuilder(MarkLogicConnection conn) {
+		this.conn = conn;
+	}
+
+	@Override
+	public Song getSongDetails(String uri) {
+		
+		
+		Document doc = getDOMDocument(uri);
+		
+		Song song = getSongInternal(uri,doc);
+		
+		song.setAlbum(getTagValue("album", doc));
+		logger.debug(" Song album " + song.getAlbum() );
+		
+		song.setLabel(getTagValue("label", doc));
+		logger.debug(" Song label " + song.getLabel() );
+		
+		song.setWriters(get2ndLevelChildren("writers", doc));
+		logger.debug(" Song writers " + song.getWriters() );
+		
+		song.setProducers(get2ndLevelChildren("producers", doc));
+		logger.debug(" Song producers " + song.getProducers() );
+		
+		song.setFormats(get2ndLevelChildren("formats", doc));
+		logger.debug(" Song formats " + song.getFormats() );
+		
+		song.setLengths(get2ndLevelChildren("lengths", doc));
+		logger.debug(" Song lengths " + song.getLengths() );
+		
+		song.setDescription(getSongDescription(doc,99999)); 
+		logger.debug(" Song description " + song.getDescription() );
+
+		song.setWeeks(get2ndLevelChildren("weeks", doc));
+		logger.debug(" Song actual weeks at #1 " + song.getWeeks() );
+		
+		song.setAlbumimage(getAlbumURI(doc));
+		logger.debug(" Song album image uri " + song.getAlbumimage() );
+			
+		return song;
+	}
+
+	@Override
+	public Song getSong(String uri) {
+		return getSongInternal(uri,getDOMDocument(uri));
+	}
+
+	private Song getSongInternal(String uri, Document doc) {
+		// create the POJO
+		Song song = new Song();
+		
+		song.setTitle(getTagValue("title", doc));
+		logger.debug("song title is " + song.getTitle() );
+
+		song.setArtist(getTagValue("artist", doc));
+		logger.debug("song artist is " + song.getArtist() );
+
+		song.setUri(uri);
+		logger.debug("song uri is " + song.getPlainTextUri() );
+		
+		song.setGenres(getGenres(doc));
+		logger.debug("song genres is/are " + song.getGenres() );
+		 
+		song.setWeekending(getWeekLastAttr(doc));
+		logger.debug("song last week in charts was " + song.getWeekending() );
+
+		song.setTotalweeks(getNumberOfWeeks(doc));
+		logger.debug(" number of weeks at #1 was " + song.getTotalweeks() );
+		
+		song.setDescription(getSongDescription(doc,40)); 
+		logger.debug(" Song description " + song.getDescription() );
+
+		return song; 
+		
+	}
+	private Document getDOMDocument(String uri) {
+		// set up the read
+		XMLDocumentManager docMgr = conn.getClient().newXMLDocumentManager();
+		// create the handle
+		DOMHandle readHandle = new DOMHandle();
+		// read the document into the handle
+		logger.debug("About to read document "+uri);
+		docMgr.read(uri, readHandle);
+		// access and return the document content
+		return readHandle.get();
+		
+	}
+
+
+	private String getTagValue(String tagName,Document doc) {
 		
 		NodeList nodeList = doc.getElementsByTagName(tagName);
 		
@@ -49,7 +146,7 @@ public class SongHelper {
 		
 	}
 
-	public static String get2ndLevelChildren(String tagName,Document doc) {
+	private String get2ndLevelChildren(String tagName,Document doc) {
 		// get genres
 		// get each child node (genre)
 		// for each genre get each child text node , add to list (in lower case)
@@ -99,7 +196,7 @@ public class SongHelper {
 	}
 
 	
-	public static String getGenres(Document doc) {
+	private String getGenres(Document doc) {
 		// get genres
 		// get each child node (genre)
 		// for each genre get each child text node , add to list (in lower case)
@@ -148,7 +245,7 @@ public class SongHelper {
 		return sb.toString();
 	}
 	
-	public static String getWeekLastAttr(Document doc) {
+	private String getWeekLastAttr(Document doc) {
 		
 		Element weeks = getWeeksNode(doc);
 		
@@ -164,7 +261,7 @@ public class SongHelper {
 		return lastValue;
 	}
 	
-	public static long getNumberOfWeeks(Document doc) {
+	private long getNumberOfWeeks(Document doc) {
 		Element weeks = getWeeksNode(doc);
 		if (weeks == null)
 			return 0;
@@ -176,7 +273,7 @@ public class SongHelper {
 		return nl.getLength();
 	}
 	
-	private static Element getWeeksNode(Document doc) {
+	private Element getWeeksNode(Document doc) {
 
 		NodeList nodeList = doc.getElementsByTagName("weeks");
 		
@@ -193,7 +290,7 @@ public class SongHelper {
 		}
 		
 	}
-	public static String getSongDescription(Document doc,long numberOfWords) {
+	private String getSongDescription(Document doc,long numberOfWords) {
 
 		NodeList nodeList = doc.getElementsByTagName("descr");
 		
@@ -240,7 +337,7 @@ public class SongHelper {
 	    }
 		return result.toString();
 	}
-	public static String getAlbumURI(Document doc) {
+	private String getAlbumURI(Document doc) {
 		
 		NodeList nodeList = doc.getElementsByTagName("album");
 		
@@ -267,5 +364,6 @@ public class SongHelper {
  		return uri;
 		
 	}
+
 
 }

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-song xmlns="http://marklogic.com/MLU/top-songs">
+  <!--Copyright (c) 2010 Mark Logic Corporation. Permission is
+granted to copy, distribute and/or modify this document under the terms of the
+GNU Free Documentation License, Version 1.2 or any later version published by
+the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts,
+and no Back-Cover Texts. A copy of the license is included in the section 
+entitled "GNU Free Documentation License." Content derived from 
+http://en.wikipedia.org/wiki/Southern_Nights_(song) 
+
+Modified in February 2010 by Mark Logic Corporation under the terms of the 
+GNU Free Documentation License.-->
+  <title href="http://en.wikipedia.org/wiki/Southern_Nights_(song)" xmlns:ts="http://marklogic.com/MLU/top-songs">Southern Nights</title>
+  <artist href="http://en.wikipedia.org/wiki/Glen_Campbell" xmlns:ts="http://marklogic.com/MLU/top-songs">Glen Campbell</artist>
+  <weeks last="1977-04-30">
+    <week>1977-04-30</week>
+  </weeks>
+  <album>Southern Nights</album>
+  <released>January 1977 ( U.S. )</released>
+  <formats>
+    <format>7"</format>
+  </formats>
+  <recorded>1976</recorded>
+  <genres>
+    <genre>Country</genre>
+  </genres>
+  <lengths>
+    <length>3:00</length>
+  </lengths>
+  <label>Capitol Records 4376</label>
+  <writers>
+    <writer>Allen Toussaint</writer>
+  </writers>
+  <producers>
+    <producer>Gary Klein</producer>
+  </producers>
+  <descr>
+    <p>"Southern Nights" is a song written by Allen Toussaint and
+    most famously recorded by country-pop singer Glen Campbell. The
+    song enjoyed immense popularity with both country and pop
+    audiences when Campbell covered it in 1977.</p>
+    <p>Campbell had been a leader in crossover music during the
+    1960s and 1970s, and continued that trend when he recorded
+    Toussaint's "Southern Nights." Toussaint recalled his memories
+    of visiting relatives in the Louisiana backwoods when writing
+    the song; often, while listening to stories from his elderly
+    relatives, the young Toussaint would look up in the clear
+    nighttime, star-filled sky.</p>
+    <p>Campbell listened to Toussaint's recording of the song and
+    identified with its lyrics, as it reminded him of his days as
+    an Arkansas farm youth. "My dad told me when I was a kid,
+    'You're having the best time of your life, and you don't even
+    known it.' Sure enough, he was right."</p>
+    <p>After some modifications to the lyrics, Campbell recorded
+    the song.</p>
+    <p>Released in January 1977, "Southern Nights" immediately
+    caught on with both country and pop audiences. The song spent
+    the late winter and early spring climbling both the 
+    <i>Billboard magazine</i>Hot Country Singles and Billboard Hot
+    100 charts.</p>
+    <p>Toward the end of March, the song spent two weeks at No. 1
+    on the country chart, and at the end of April, one week at No.
+    1 on the Hot 100. On both charts, it was Campbell's final #1
+    song, his fifth on the country chart, and second on the pop
+    chart. In addition, the song rose to #1 on the adult
+    contemporary chart, where it remained for four weeks; this was
+    Campbell's seventh #1 on this chart.</p>
+    <p>"Southern Nights" was Campbell's final Top 10 hit on the 
+    <i>Billboard</i>Hot 100. However, he would continue to enjoy
+    success on the country chart, scoring Top 10 hits through the
+    end of 1989.</p>
+    <p>"Southern Nights" was certified gold for sales of 1 million
+    units by the Recording Industry Association of America. [3]</p>
+    <p>The song was nominated for Song of the Year in 1977 by the
+    Country Music Association, but did not win.</p>
+  </descr>
+</top-song>

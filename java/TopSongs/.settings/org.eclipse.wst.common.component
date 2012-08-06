@@ -3,6 +3,7 @@
     <wb-module deploy-name="TopSongs">
         <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/.apt_generated"/>
         <property name="context-root" value="TopSongs"/>
         <property name="java-output-path" value="/TopSongs/build/classes"/>
     </wb-module>
