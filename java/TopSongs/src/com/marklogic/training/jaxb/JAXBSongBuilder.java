@@ -30,32 +30,33 @@ public class JAXBSongBuilder implements SongBuilder {
 			return null;
 
 		Song song = getSongInternal(uri, topsong);
+				
 		// now fill up all the additional details
-		song.setAlbum(topsong.getAlbum().getAlbum() );
+		song.setAlbum( (topsong.getAlbum() == null?"": topsong.getAlbum().getAlbum() ) );
 		logger.debug(" Song album " + song.getAlbum() );
 		
-		song.setLabel(topsong.getLabel() );
+		song.setLabel((topsong.getLabel() == null?"":topsong.getLabel() ) );
 		logger.debug(" Song label " + song.getLabel() );
 		
-		song.setWriters(topsong.getWriters().toCSL() );
+		song.setWriters((topsong.getWriters() == null?"":topsong.getWriters().toCSL() ) );
 		logger.debug(" Song writers " + song.getWriters() );
 		
-		song.setProducers(topsong.getProducers().toCSL() );
+		song.setProducers( (topsong.getProducers() == null?"": topsong.getProducers().toCSL() ) );
 		logger.debug(" Song producers " + song.getProducers() );
 		
-		song.setFormats(topsong.getFormats().toCSL() );
+		song.setFormats( (topsong.getFormats() == null?"":topsong.getFormats().toCSL() ) );
 		logger.debug(" Song formats " + song.getFormats() );
 		
-		song.setLengths(topsong.getLengths().toCSL() );
+		song.setLengths( (topsong.getLengths() == null?"":topsong.getLengths().toCSL()  ));
 		logger.debug(" Song lengths " + song.getLengths() );
 		
 		song.setDescription(topsong.stringifyDescr() ); 
 		logger.debug(" Song description " + song.getDescription() );
 
-		song.setWeeks(topsong.getWeeks().toCSL() );
+		song.setWeeks((topsong.getWeeks() == null?"": topsong.getWeeks().toCSL()) );
 		logger.debug(" Song actual weeks at #1 " + song.getWeeks() );
 		
-		song.setAlbumimage(topsong.getAlbum().getUri());
+		song.setAlbumimage( (topsong.getAlbum() == null?"":topsong.getAlbum().getUri() ));
 		logger.debug(" Song album image uri " + song.getAlbumimage() );
 		
 		return song;
@@ -73,27 +74,25 @@ public class JAXBSongBuilder implements SongBuilder {
 	private Song getSongInternal(String uri,Topsong topsong) {
 		Song song = new Song();
 		// implement me !!
-		song.setTitle(topsong.getTitle() );
+		song.setTitle((topsong.getTitle() == null?"":topsong.getTitle() ) );
 		logger.debug("song title is " + song.getTitle() );
 
-		song.setArtist(topsong.getArtist() );
+		
+		song.setArtist((topsong.getArtist() == null?"":topsong.getArtist() ) );
 		logger.debug("song artist is " + song.getArtist() );
 
-		song.setUri(uri);
+		song.setUri((uri == null?"": uri));
 		logger.debug("song uri is " + song.getPlainTextUri() );
 		
-		song.setGenres(topsong.getGenres().toCSL() );
+		song.setGenres( (topsong.getGenres() == null?"": topsong.getGenres().toCSL() ) );
 		logger.debug("song genres is/are " + song.getGenres() );
 		 
-		song.setWeekending(topsong.getWeeks().getLast() );
+		song.setWeekending((topsong.getWeeks() == null?"": topsong.getWeeks().getLast() ) );
 		logger.debug("song last week in charts was " + song.getWeekending() );
 
-		song.setTotalweeks(topsong.getWeeks().getWeek().size() );
+		song.setTotalweeks((topsong.getWeeks() == null?0:topsong.getWeeks().getWeek().size() ) );
 		logger.debug(" number of weeks at #1 was " + song.getTotalweeks() );
 		
-		song.setDescription(topsong.stringifyDescr() ); 
-		logger.debug(" Song description " + song.getDescription() );
-
 		return song;
 	}
 	
@@ -120,5 +119,6 @@ public class JAXBSongBuilder implements SongBuilder {
 
 
 	}
+	
 
 }

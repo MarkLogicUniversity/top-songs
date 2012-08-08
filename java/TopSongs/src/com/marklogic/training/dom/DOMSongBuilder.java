@@ -98,7 +98,8 @@ public class DOMSongBuilder implements SongBuilder {
 		song.setTotalweeks(getNumberOfWeeks(doc));
 		logger.debug(" number of weeks at #1 was " + song.getTotalweeks() );
 		
-		song.setDescription(getSongDescription(doc,40)); 
+		// no longer needed - this field is filled on screen from snippets
+		song.setDescription(""); 
 		logger.debug(" Song description " + song.getDescription() );
 
 		return song; 
@@ -136,7 +137,10 @@ public class DOMSongBuilder implements SongBuilder {
 
 		NodeList childList = node.getChildNodes();
 
-		logger.debug("found "+childList.getLength() + " child elements of "+ node.getNodeName() ); 
+		logger.debug("found "+childList.getLength() + " child elements of "+ node.getNodeName() );
+		
+		if (childList.getLength() == 0)
+			return "";
 
 		Node text = childList.item(0);
 		

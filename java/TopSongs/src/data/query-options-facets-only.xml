@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<options xmlns="http://marklogic.com/appservices/search" > 
+<transform-results apply="snippet">
+  <preferred-elements>
+    <element ns="http://marklogic.com/MLU/top-songs" name="descr"/>
+  </preferred-elements>
+</transform-results>
+
+<debug>true</debug>
+
+<return-results>false</return-results>
+
+<constraint name="artist" >
+  <range collation="http://marklogic.com/collation/en/S1/AS/T00BB" type="xs:string" facet="true" >
+    <element ns="http://marklogic.com/MLU/top-songs" name="artist" />
+    <facet-option>limit=30</facet-option>
+    <facet-option>frequency-order</facet-option>
+    <facet-option>descending</facet-option>
+  </range>
+</constraint>
+     
+<operator name="sort">
+      <state name="relevance">
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>
+      <state name="newest">
+          <sort-order direction="descending" type="xs:date">
+              <attribute ns="" name="last"/>
+              <element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>
+      <state name="oldest">
+          <sort-order direction="ascending" type="xs:date">
+              <attribute ns="" name="last"/>
+              <element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>            
+      <state name="title">
+          <sort-order direction="ascending" type="xs:string">
+              <element ns="http://marklogic.com/MLU/top-songs" name="title"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>            
+      <state name="artist">
+          <sort-order direction="ascending" type="xs:string">
+              <element ns="http://marklogic.com/MLU/top-songs" name="artist"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>            
+</operator>
+</options>

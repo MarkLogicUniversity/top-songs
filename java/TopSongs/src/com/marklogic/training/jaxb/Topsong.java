@@ -155,10 +155,10 @@ public class Topsong {
 	     
 	      
 	    }
-	    catch (TransformerException e)
+	    catch (Exception e)
 	    {
-	      xmlString = "description not found";
-	    }
+	      xmlString = "";
+	    } 
 
 		return xmlString;
 	}

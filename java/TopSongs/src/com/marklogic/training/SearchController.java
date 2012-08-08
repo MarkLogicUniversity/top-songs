@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.lang.Math;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -20,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.marklogic.training.model.Pagination;
 import com.marklogic.training.model.Query;
 import com.marklogic.training.model.SearchResults;
 import com.marklogic.training.model.Song;
@@ -42,26 +44,33 @@ public class SearchController {
 	public String search( @RequestParam(required=false, value="q") String q, 
 			 			  @RequestParam(required=false, value="submitbtn") String submitbtn,
 			 			  @RequestParam(required=false, value="sortby") String sortby,
+			 			  @RequestParam(required=false, value="start", defaultValue="1") long start,
 			 			  Model model) {
 		
 		logger.info("Entered search function.. " );
 		
-		String arg = processInput(q, submitbtn, sortby);
+		String arg = processInput(q, submitbtn, sortby, start);
+		
 		logger.info("effective search arg = "+arg );
 		
+		logger.info("start paging set to " + start);
+	
 		Sortoptions[] options = fillSortbyOptions(arg);
-		
+				
 		SearchResults results = null;
 		Query query = new Query();
 		query.setParameter(arg);
 		try {
 			 
-			results = search.search(arg);
+			results = search.search(arg, start, false);
 			
 		} catch (Exception e ) {
-			logger.error("caught exception in search()"+e.toString() );
+			logger.error("caught exception in search() "+e.toString() );
+
 		}
+		Pagination pagination = calculatePaginationDetails(start, results.getTotal(), results.getPageLength() );
 		
+		logger.info("pagination details follow "+ pagination);
 		
 		// set the display mode for the JSP  
 		model.addAttribute("mode", "list");
@@ -69,6 +78,7 @@ public class SearchController {
 		model.addAttribute("results", results);
 		model.addAttribute("query", query);
 		model.addAttribute("sortoptions", options);
+		model.addAttribute("page", pagination);
 		
 		return "search";
 	}
@@ -99,7 +109,21 @@ public class SearchController {
 		model.addAttribute("song", song);
 		// set the display mode for the JSP  
 		model.addAttribute("mode", "detail");
+		//now call search to get the facets
+		SearchResults results = null;
+
+		try {
+			 
+			results = search.search("sort:newest", 1, true);
+			
+		} catch (Exception e ) {
+			logger.error("caught exception in search() "+e.toString() );
+
+		}
 		
+		// add the display data objects for processing in the JSP
+		model.addAttribute("results", results);
+	
 		return "search";
 	}
 	/**
@@ -141,7 +165,7 @@ public class SearchController {
 		
 		logger.info("Routing to advanced search page ");
 		
-		return this.search("whole buncha advanced stuff","","", model);
+		return this.search("whole buncha advanced stuff","","",1, model);
 	}	
 	/**
 	 * Routes the user to the special search results based on his birthday
@@ -190,13 +214,15 @@ public class SearchController {
 	 * (sorts can be specified in search box or using the sortby dropdown)
 	 *  
 	 */
-	private static String processInput(String q, String button, String sortby) {
+	private static String processInput(String q, String button, String sortby, long start) {
 		
 		if (q == null) {
 			logger.info("q was null");
 		} else if (q == "") {
-			logger.info("q was "+q);
+			logger.info("q was empty");
 			q = "sort:newest";
+		} else {
+			logger.info("q was "+q);
 		}
 		if (button == null) {
 			logger.info("button was null");
@@ -211,6 +237,7 @@ public class SearchController {
 			logger.info("sortby was "+sortby);
 		
 		}
+
 		if ( (button == null) && (sortby == null) && (q == null) ) {
 			logger.info("everything null");
 			q = "sort:newest";
@@ -218,51 +245,63 @@ public class SearchController {
 		}
 		
 		/*
-		 * test to see whether
-		 * 1. sortby dropdown has been selected
-		 * 2. a sort option has been entered on the command line (button != null and sort: present), 
-		 * 		so it must be extracted from q (sort:XXXX)
-		 * 
+		 * item	 : q		sortby	button 
+		 * value : f		null	null	:  facet link clicked
+		 * 		   empty	search	filled  :  search clicked (or enter pressed)
+		 * 		   n/a		null	filled	:  sortby selected  
 		 */
-		String sort = null;
-		if (button == null) {
-			// we only need the value of sortby
-			// or to replace any residual sort option in the search
-			// box with the value of sortby
-			if (isSortOptionPresent(q)) {
-				logger.info(" sortby set: sort argument found");
-				sort = replaceSortOptions(q,sortby);
-				
-				
-			} else {
-				// insert default sort option
-				logger.info("sortby set: No sort argument found");
-				sort = insertSortOptions(q, sortby);
-			}
 
-		} else {
-			// extract the sort query out of q
+		String sort = null;
+		// pagination
+		if ((button == "page" || button == "pagemin") && start > 0)  {	
+			logger.info(" start set: start = "+start);
+			sort = q;
+			logger.info(" query arg is = "+sort);
+
+			return sort;
+		}
+			
+		// sortby selection was changed - replace sort option if present otherwise insert one
+		if (button == null && sortby != null) {
+
+			logger.info(" sortby set: sort argument found");
 			if (isSortOptionPresent(q)) {
-				logger.info("sort in search arg: sort argument found");
+				logger.info(" sortby set: sort argument found - replacing");
+				sort = replaceSortOptions(q,sortby);			
+			} else {
+				logger.info("sortby set: No sort argument found - inserting");
+				sort = insertSortOptions(q, sortby);				
+			}
+				
+		}
+		// if facet link is clicked
+		if (button == null && sortby == null && q !=null) {
+			logger.info("facet link clicked");
+			sort = q;			
+		}
+		if (button != null ) {
+			if (isSortOptionPresent(q)) {
+				logger.info("search button: sort argument found");
 				sort = q;
 				
 			} else {
 				// insert default sort option
-				logger.info("sort in search arg: No sort argument found");
-				sort = insertSortOptions(q, "relevance");
+				logger.info("search button: No sort argument found - insert default");
+				sort = insertSortOptions(q, "newest");
 			}
 			
 		}
+		
 		logger.info("sort = "+sort);
 		return sort;
 	}
 	private static boolean isSortOptionPresent(String q) {
-		CharSequence cs = (CharSequence) sortOperator;
+		CharSequence cs = sortOperator;
 		return q.contains(cs);
 
 	}
 	private static Sortoptions[] fillSortbyOptions(String q) {
-		//count occurence
+		//count occurrence
 		String[] tokens = q.split(" ");
 		List<String> sorts = new ArrayList<String>();
 		for (int i = 0; i<tokens.length; i++) {
@@ -369,6 +408,45 @@ public class SearchController {
 	    oldest,
 	    artist,
 	    title
-	 }
+	}
+	private Pagination calculatePaginationDetails(long startPos, long totalPages, long pageLength) {
+
+		long start, length, total, last, end, next, previous, currpage, pagemin, totpages, rangestart, rangeend;
+		
+		start = startPos;
+		total = totalPages;
+		length = pageLength;
+		
+		last = start + length - 1;
+		if (total > last )
+			end = last;
+		else
+			end = total;
+		
+		previous = 0;
+		next = 0;
+		if (total > last) 
+			next = last + 1;
+		if (start > 1 && (start - length) > 0 )
+			previous = Math.max((start-length), 1);
+		
+		double t = total;
+		double l = length;
+		double s = start;
+
+		totpages = (long) Math.ceil(t/l);
+		currpage = (long) Math.ceil(s/l);
+		
+		if (currpage > 0 && currpage < 5)
+			pagemin = 1;
+		else
+			pagemin = currpage - 4;
+		
+		rangestart = Math.max(pagemin, 1);
+		rangeend = Math.min(totpages, rangestart + 4);
+		
+		return new Pagination(start, length, total, last, end, next, previous, currpage, totpages, rangestart, rangeend);
+	
+	}
 	
 }

@@ -31,7 +31,8 @@ import com.marklogic.training.model.FacetDetails;
  */
 public class Search {
 
-	private static final String OPTIONS_NAME = "full-options";
+	private static final String FULL_OPTIONS = "full-options";
+	private static final String FACETS_ONLY = "facets-only-full-options";
 	private static final Logger logger = LoggerFactory.getLogger(Search.class);
 	private static MarkLogicConnection conn = null;
 	private SongBuilder songBuilder = null;
@@ -51,16 +52,22 @@ public class Search {
 	 * 3. parse the results into a tree
 	 * 4. create a POJO with the results for processing in the view.
 	 */
-	public SearchResults search(String arg) {
+	public SearchResults search(String arg, long start, boolean facetsOnly) {
 		
 		logger.info("Performing search() with arg = "+(arg == ""?" EMPTY_STRING":arg) );
 		
+		String options;
+		if (facetsOnly)
+			options = FACETS_ONLY;
+		else
+			options = FULL_OPTIONS;
+			
 		
 		// create a manager for searching
 		QueryManager queryMgr = conn.getClient().newQueryManager();
 
 		// create a search definition
-		StringQueryDefinition querydef = queryMgr.newStringDefinition(OPTIONS_NAME);
+		StringQueryDefinition querydef = queryMgr.newStringDefinition(options);
 		
 		// set the search argument
 		querydef.setCriteria(arg);
@@ -71,7 +78,7 @@ public class Search {
 		// set the page length
 		queryMgr.setPageLength(10);
 		// run the search
-		queryMgr.search(querydef, resultsHandle);
+		queryMgr.search(querydef, resultsHandle, start);
 		
 		logger.info("Matched "+resultsHandle.getTotalResults()+
 				" documents with '"+querydef.getCriteria()+"'\n");
@@ -115,7 +122,7 @@ public class Search {
 		Song[] songs = new Song[docSummaries.length];
 		int i = 0;
 		for (MatchDocumentSummary docSummary: docSummaries) {
-			
+						
 			MatchLocation[] matches = docSummary.getMatchLocations();
 					
 			List<Snippet> snippetList = new ArrayList<Snippet>();
@@ -147,7 +154,7 @@ public class Search {
 			songs[i] = song;
 			i++;
 		}
-		SearchResults results = new SearchResults(facets, songs);
+		SearchResults results = new SearchResults(facets, songs, resultsHandle.getTotalResults(), queryMgr.getPageLength() );
 		return results;
 		
 	}

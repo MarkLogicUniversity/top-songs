@@ -16,11 +16,11 @@
   <img src="resources/images/checkblank.gif"/> 
   <div class="facet">
 	<c:forEach items="${results.facets}" var="facet">
-       <div class="purplesubheading"><img src="resources/images/checkblank.gif"/><c:out value="${facet.name}"/></div>
+       <div class="purplesubheading" ><c:out value="${facet.name}"/></div>
        <c:forEach items="${facet.facetvalues}" var="facetvalue" >
        		<c:if test="${facetvalue.name !=''}" >
        		  <div class="facet-value">
-       			<a href=""><c:out value="${fn:toLowerCase(facetvalue.name)}"/></a> <c:out value="${facetvalue.count}" />
+       			<a href="search.html?q=${facet.name}:%22${facetvalue.name}%22%20AND%20${query.parameter}"><c:out value="${fn:toLowerCase(facetvalue.name)}"/></a> <c:out value="${facetvalue.count}" />
        		  </div>			
        		</c:if>
    		</c:forEach>
@@ -44,23 +44,54 @@
     <input style="border:0; width:0; height:0; background-color: #A7C030" type="text" size="0" maxlength="0"/><input type="submit" id="submitbtn" name="submitbtn" value="search"/>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;
     		<a href="advanced.html">advanced search</a>
   </div>
+
   <div id="detaildiv">
-<div id="countdiv" xmlns=""><b>1</b> to <b>10</b> of 56</div>
-<div id="sortbydiv" xmlns="">
-             sort by: 
-<select name="sortby" id="sortby" onchange="this.form.submit()">
-	<c:forEach items="${sortoptions}" var="sortoption" >
-		 <option value="${sortoption.option}"
-			<c:if test="${sortoption.selected}" >
-		 			selected="true"
-		 	</c:if>
-		 	>${sortoption.option}</option>
-	</c:forEach>
- 
-</select>
-</div>
-  <div id="detaildiv">
+
   <c:if test="${mode =='list'}" >
+  
+	<c:if test="${fn:length(results.songs) ne '0'}">
+	  	
+		<div id="countdiv"><b>${page.start}</b> to <b>${page.end}</b> of ${page.total}</div>
+		<div id="sortbydiv" xmlns="">
+		             sort by: 
+		<select name="sortby" id="sortby" onchange="this.form.submit()">
+			<c:forEach items="${sortoptions}" var="sortoption" >
+				 <option value="${sortoption.option}"
+					<c:if test="${sortoption.selected}" >
+				 			selected="true"
+				 	</c:if>
+				 	>${sortoption.option}</option>
+			</c:forEach>
+		 
+		</select>
+		</div>
+		
+		<c:if test="${page.rangestart != page.rangeend}" >
+			<div id="pagenumdiv"> 
+				<c:if test="${page.previous ne '0'}" >
+					<a href="search.html?q=${query.parameter}&amp;start=${page.previous}&amp;submitbtn=page" title="View previous ${page.length} results"><img src="resources/images/prevarrow.gif" class="imgbaseline"  border="0" /></a>
+				</c:if>
+				<c:forEach var="i" begin="${page.rangestart}" end="${page.rangeend}">
+					<c:set var="pagestart" value="${(page.length * i) + 1 - page.length}"/>
+					<c:choose>
+		   			<c:when test="${i == page.currpage}">
+		        		<b>&#160;<u><c:out value="${i}"/></u>&#160;</b>
+		    		</c:when>
+		    		<c:otherwise>
+		        		<span class="hspace">&#160;<a href="search.html?q=${query.parameter}&amp;start=${pagestart}&amp;submitbtn=pagemin"><c:out value="${i}"/></a>&#160;</span>
+		    		</c:otherwise>
+					</c:choose>
+		
+				</c:forEach>
+				<c:if test="${page.next ne '0'}" >
+					<a href="search.html?q=${query.parameter}&amp;start=${page.next}&amp;submitbtn=page" title="View next ${page.length} results"><img src="resources/images/nextarrow.gif" class="imgbaseline"  border="0" /></a>
+				</c:if>
+			</div>
+		  
+		</c:if>
+	
+	</c:if>
+
      <c:forEach items="${results.songs}" var="song">
       <div>
          <div class="songname">"${song.title}" by ${song.artist}</div>
@@ -88,7 +119,7 @@
          </div>
       </div>
 	</c:forEach>
-	<c:if test="${fn:length(songs) eq 0}">
+	<c:if test="${fn:length(results.songs) eq '0'}">
 	       <div> Sorry, no results for your search. <br/><br/><br/></div>
 	</c:if>   
   </c:if>
