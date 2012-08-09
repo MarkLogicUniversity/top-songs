@@ -15,16 +15,6 @@
 	</bean>
 
 	<mvc:annotation-driven />
-<!--     	
-	<mvc:view-controller path="/" view-name="index" />
-	<mvc:view-controller path="/index.html" view-name="index" />
-	<mvc:view-controller path="/index" view-name="index" />	
- 	<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping" />
-	<bean class="com.marklogic.training.SearchController" init-method="init"  destroy-method="destroy" />
--->	
- 
-
-
 	
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
 	<mvc:resources mapping="/resources/**" location="/resources/" />

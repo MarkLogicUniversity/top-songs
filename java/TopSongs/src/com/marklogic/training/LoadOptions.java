@@ -14,10 +14,9 @@ import com.marklogic.client.io.StringHandle;
 public class LoadOptions {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoadOptions.class);
-	//private static final String OPTIONS_NAME = "full-options";
+//	private static final String OPTIONS_NAME = "full-options";
+//	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";	
 	private static final String OPTIONS_NAME = "facets-only-full-options";
-	//private static final String OPTIONS_NAME = "advanced-options";
-	//private static final String OPTIONS_FILENAME = "data/query-options-full.xml";	
 	private static final String OPTIONS_FILENAME = "data/query-options-facets-only.xml";	
 
 	/*

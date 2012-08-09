@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<options xmlns="http://marklogic.com/appservices/search" xmlns:search="http://marklogic.com/appservices/search"> 
+<options xmlns="http://marklogic.com/appservices/search" > 
 <transform-results apply="snippet">
   <preferred-elements>
     <element ns="http://marklogic.com/MLU/top-songs" name="descr"/>
@@ -16,46 +16,68 @@
     <facet-option>descending</facet-option>
   </range>
 </constraint>
-     
-<search:operator name="sort">
-      <search:state name="relevance">
-          <search:sort-order>
-              <search:score/>
-          </search:sort-order>
-      </search:state>
-      <search:state name="newest">
-          <search:sort-order direction="descending" type="xs:date">
-              <search:attribute ns="" name="last"/>
-              <search:element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
-          </search:sort-order>
-          <search:sort-order>
-              <search:score/>
-          </search:sort-order>
-      </search:state>
-      <search:state name="oldest">
-          <search:sort-order direction="ascending" type="xs:date">
-              <search:attribute ns="" name="last"/>
-              <search:element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
-          </search:sort-order>
-          <search:sort-order>
-              <search:score/>
-          </search:sort-order>
-      </search:state>            
-      <search:state name="title">
-          <search:sort-order direction="ascending" type="xs:string">
-              <search:element ns="http://marklogic.com/MLU/top-songs" name="title"/>
-          </search:sort-order>
-          <search:sort-order>
-              <search:score/>
-          </search:sort-order>
-      </search:state>            
-      <search:state name="artist">
-          <search:sort-order direction="ascending" type="xs:string">
-              <search:element ns="http://marklogic.com/MLU/top-songs" name="artist"/>
-          </search:sort-order>
-          <search:sort-order>
-              <search:score/>
-          </search:sort-order>
-      </search:state>            
-</search:operator>
+<constraint name="decade">
+  <range type="xs:date">
+    <bucket ge="2010-01-01" name="2010s">2010s</bucket>
+    <bucket lt="2010-01-01" ge="2000-01-01" name="2000s">2000s</bucket>
+    <bucket lt="2000-01-01" ge="1990-01-01" name="1990s">1990s</bucket>
+    <bucket lt="1990-01-01" ge="1980-01-01" name="1980s">1980s</bucket>
+    <bucket lt="1980-01-01" ge="1970-01-01" name="1970s">1970s</bucket>
+    <bucket lt="1970-01-01" ge="1960-01-01" name="1960s">1960s</bucket>
+    <bucket lt="1960-01-01" ge="1950-01-01" name="1950s">1950s</bucket>
+    <bucket lt="1950-01-01" name="1940s">1940s</bucket>
+    <attribute ns="" name="last"/>
+    <element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
+    <facet-option>limit=10</facet-option>
+  </range>
+</constraint>
+<constraint name="genre">
+  <range type="xs:string" collation="http://marklogic.com/collation/en/S1/AS/T00BB">
+   <element ns="http://marklogic.com/MLU/top-songs" name="genre"/>
+   <facet-option>limit=20</facet-option>
+   <facet-option>frequency-order</facet-option>
+   <facet-option>descending</facet-option>
+  </range>
+</constraint>      
+<operator name="sort">
+      <state name="relevance">
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>
+      <state name="newest">
+          <sort-order direction="descending" type="xs:date">
+              <attribute ns="" name="last"/>
+              <element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>
+      <state name="oldest">
+          <sort-order direction="ascending" type="xs:date">
+              <attribute ns="" name="last"/>
+              <element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>            
+      <state name="title">
+          <sort-order direction="ascending" type="xs:string">
+              <element ns="http://marklogic.com/MLU/top-songs" name="title"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>            
+      <state name="artist">
+          <sort-order direction="ascending" type="xs:string">
+              <element ns="http://marklogic.com/MLU/top-songs" name="artist"/>
+          </sort-order>
+          <sort-order>
+              <score/>
+          </sort-order>
+      </state>            
+</operator>
 </options>

@@ -6,11 +6,7 @@ id="WebApp_ID" version="3.0">
 
 
     <display-name>Top Songs</display-name>
-<!--     
-    <welcome-file-list>
-      <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
--->
+
 	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>

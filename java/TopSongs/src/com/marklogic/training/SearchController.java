@@ -53,7 +53,7 @@ public class SearchController {
 		
 		logger.info("effective search arg = "+arg );
 		
-		logger.info("start paging set to " + start);
+		logger.debug("start paging set to " + start);
 	
 		Sortoptions[] options = fillSortbyOptions(arg);
 				
@@ -70,8 +70,8 @@ public class SearchController {
 		}
 		Pagination pagination = calculatePaginationDetails(start, results.getTotal(), results.getPageLength() );
 		
-		logger.info("pagination details follow "+ pagination);
-		
+		logger.debug("pagination details follow "+ pagination);
+		logger.info("search arg before JSP " + query.getParameter());
 		// set the display mode for the JSP  
 		model.addAttribute("mode", "list");
 		// add the display data objects for processing in the JSP

@@ -18,7 +18,6 @@ import com.marklogic.client.query.MatchSnippet;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
 
-import com.marklogic.training.dom.DOMSongBuilder;
 import com.marklogic.training.jaxb.JAXBSongBuilder;
 import com.marklogic.training.model.Facet;
 import com.marklogic.training.model.SearchResults;
