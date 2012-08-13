@@ -2,6 +2,7 @@ package com.marklogic.training;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,8 @@ import com.marklogic.training.model.Song;
 public class SearchController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
-	private static final String sortOperator = "sort:";
+	private static final String sortOperator = "sort:";  
+	   
 	/*
 	 * the Search object will be used to to search the MarkLogic database
 	 */
@@ -138,7 +140,6 @@ public class SearchController {
 	    // copy it to response's OutputStream
 	    try {
 			IOUtils.copy(is, response.getOutputStream());
-			//response.setContentType("application/jpeg"); 
 			response.flushBuffer();
 		} catch (IOException e) {
 		      logger.info("Error writing image to output stream. Filename was '" + uri + "'");
@@ -156,17 +157,84 @@ public class SearchController {
 		logger.info("Routing to advanced search page ");
 		
 		return "advanced";
-	}
+	}  
 	/**
 	 * processed the advanced search args and displays the corresponding search results page.
 	 */
 	@RequestMapping("advancedSearch*")	
-	public String advancedSearch(Locale locale, Model model) {
+	public String advancedSearch(@RequestParam(value="advanced") String advanced, 
+			  @RequestParam(value="keywords") String keywords,
+			  @RequestParam(value="type") String type,
+			  @RequestParam(value="exclude") String exclude,
+			  @RequestParam(value="genre") String genre,
+			  @RequestParam(value="creator") String creator,
+			  @RequestParam(value="songtitle") String songtitle,
+			  @RequestParam(value="submitbtn") String submitbtn,
+			  Model model) 
+	{  
 		
 		logger.info("Routing to advanced search page ");
+		logger.info("read the following keywords " + keywords);
+		logger.info(" search with the following type " + type);
+		logger.info(" search with the following exclusions " + exclude);
+		logger.info(" search with field creator " + creator);
+		logger.info(" search with song title " + songtitle);
 		
-		return this.search("whole buncha advanced stuff","","",1, model);
+		String arg = AdvancedHelper.buildQueryString(keywords, type, exclude, creator, songtitle);
+		arg = arg + " sort:newest";
+		logger.info("effective search arg = "+arg );
+
+		Sortoptions[] options = fillSortbyOptions(arg);
+
+		SearchResults results = null;
+		Query query = new Query();
+		query.setParameter(arg);
+		try {
+			 
+			results = search.search(arg, 1, false);
+			
+		} catch (Exception e ) {
+			logger.error("caught exception in search() "+e.toString() );
+
+		}
+		Pagination pagination = calculatePaginationDetails(1, results.getTotal(), results.getPageLength() );
+		
+		logger.debug("pagination details follow "+ pagination);
+		logger.info("search arg before JSP " + query.getParameter());
+		// set the display mode for the JSP  
+		model.addAttribute("mode", "list");
+		// add the display data objects for processing in the JSP
+		model.addAttribute("results", results);
+		model.addAttribute("sortoptions", options);		
+		model.addAttribute("query", query);
+		model.addAttribute("page", pagination);
+		
+		return "search";
+		
 	}	
+	/**
+	 * suggests search results for input on the advanced page
+	 */
+	@RequestMapping("autocomplete.html")	
+	public void autocompleteSearch(@RequestParam("q") String q, HttpServletResponse response) {
+		
+		logger.info("Routing to autocomplete with q.."+q);
+		String result = search.suggest(q);
+		logger.info("suggest returned "+result);
+		PrintWriter out = null;
+		try {
+			out = response.getWriter();
+		} catch (IOException e) {
+			logger.error("caught exception when reading stream "+e.toString() );
+		}
+		
+		out.append(result);
+		try {
+			response.flushBuffer();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	/**
 	 * Routes the user to the special search results based on his birthday
 	 */

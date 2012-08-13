@@ -4,6 +4,10 @@
 <head>
 <title>Top Songs</title>
 <link href="resources/css/top-songs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="resources/autocomplete/lib/prototype/prototype.js"></script> 
+<script type="text/javascript" src="resources/autocomplete/lib/scriptaculous/scriptaculous.js"></script> 
+<script type="text/javascript" src="resources/autocomplete/src/AutoComplete.js"></script>
+<script type="text/javascript" src="resources/autocomplete/src/lib.js"></script>
 </head>
 <body>
 <div id="wrapper">

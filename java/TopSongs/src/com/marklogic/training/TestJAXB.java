@@ -89,7 +89,6 @@ public class TestJAXB {
 		try {
 			MarkLogicConnection conn = MarkLogicConnection.getInstance();
 
-			
 			try {
 
 				// create a manager for XML documents
@@ -110,10 +109,8 @@ public class TestJAXB {
 				Topsong song = (Topsong) readHandle.get();
 				  // something new 
 				// ... do something with the JAXB object ...
-			    
-				
+			    			
 				logger.info("read top song from DB "+song.toString() );
-				
 				// read the persisted XML document for the logging message
 				//String songDoc = docMgr.read(docId, new StringHandle()).get();
 				

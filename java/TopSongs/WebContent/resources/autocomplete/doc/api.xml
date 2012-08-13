@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	// 
+	// Copyright (c) 2008 Beau D. Scott | http://www.beauscott.com
+	// 
+	// Permission is hereby granted, free of charge, to any person
+	// obtaining a copy of this software and associated documentation
+	// files (the "Software"), to deal in the Software without
+	// restriction, including without limitation the rights to use,
+	// copy, modify, merge, publish, distribute, sublicense, and/or sell
+	// copies of the Software, and to permit persons to whom the
+	// Software is furnished to do so, subject to the following
+	// conditions:
+	// 
+	// The above copyright notice and this permission notice shall be
+	// included in all copies or substantial portions of the Software.
+	// 
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	// OTHER DEALINGS IN THE SOFTWARE.
+	// 
+-->
+<?xml-stylesheet type="text/xsl" href="assets/docTemplate.xsl"?>
+<classes xmlns="http://www.beauscott.com/ref/2008/pbcd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.beauscott.com/ref/2008/pbcd assets/PrototypeBasedClassDescriptor.xsd">
+
+	<class name="AutoComplete">
+		<description>
+			Prototype/Scriptaculous based _suggest tool
+		</description>
+		<properties>
+			<property name="selector" scope="public"
+				type="HTMLSelectElement">
+				<description>
+					The select object
+				</description>
+			</property>
+			<property name="input" scope="public"
+				type="HTMLInputElement">
+				<description>
+					The component that triggers the suggest
+				</description>
+			</property>
+			<property name="_timeout" scope="private"
+				type="Integer">
+				<description>
+					The timeout between lookups
+				</description>
+			</property>
+			<property name="visible" scope="public"
+				type="Boolean">
+				<description>
+					Visisbility status of the selector object
+				</description>
+			</property>
+			<property name="drawn" scope="public"
+				type="Boolean">
+				<description>
+					Flag indicating whether the components have been laid out
+				</description>
+			</property>
+			<property name="_hideTimeout" scope="private"
+				type="Integer">
+				<description>
+					ID of timeout that will hide the control if focus hasn't
+					been passed to the select element.
+				</description>
+			</property>
+		</properties>
+		<methods>
+			<method name="initialize" constructor="true" scope="public"
+				returnType="void">
+				<description>The class constructor</description>
+				<parameters>
+					<parameter name="input" type="Object" required="true">
+						<description>
+							input ID of form element, or dom element, to suggest on
+						</description>
+					</parameter>
+					<parameter name="action" type="String"
+						required="false">
+						<description>
+							URL of dictionary script
+						</description>
+					</parameter>
+					<parameter name="options" type="AutoComplete.Options"
+						required="false">
+						<description>
+							A subset of options to initialize the AutoComplete with.
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_onInputFocus" scope="private"
+				returnType="void">
+				<description>The input fields focus event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The focus event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_onSelectorBlur" scope="private"
+				returnType="void">
+				<description>The selector's blur event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The blur event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_onInputBlur" scope="private"
+				returnType="void">
+				<description>The input field's blur event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The blur event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_checkOnBlur" scope="private"
+				returnType="void">
+				<description>
+					Complete's the blur event handlers. Used as a proxy to avoid event collisions when blurring from the input
+	 				and focusing on the selector during a mouse navigation
+				</description>
+			</method>
+			<method name="_onInputKeyUp" scope="private"
+				returnType="void">
+				<description>The input field's key up event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The key up event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_onInputKeyDown" scope="private"
+				returnType="void">
+				<description>The input field's key down event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The key down event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_onSelectorFocus" scope="private"
+				returnType="void">
+				<description>The selector's focus event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The focus event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_onSelectorChange" scope="private"
+				returnType="void">
+				<description>The selector's change event handler</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The change event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="draw" scope="public"
+				returnType="void">
+				<description>
+					Lays the UI elements of the control out, sets interaction options
+				</description>
+			</method>
+			<method name="hide" scope="public"
+				returnType="void">
+				<description>
+					Hides the option box
+				</description>
+			</method>
+			<method name="_restoreFocus" scope="private"
+				returnType="void">
+				<description>
+					Resores the focus to the input control to avoid the cursor 
+					getting lost somewhere.
+				</description>
+			</method>
+			<method name="show" scope="public"
+				returnType="void">
+				<description>
+					Display's the select box
+				</description>
+			</method>
+			<method name="_cancelTimeout" scope="private"
+				returnType="void">
+				<description>
+					Removes the timeout function set by a suggest
+				</description>
+			</method>
+			<method name="_suggest" scope="private"
+				returnType="Boolean">
+				<description>
+					Triggers the suggest interaction
+				</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The interaction event (keyboard or mouse)
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_sendRequest" scope="private"
+				returnType="void">
+				<description>
+					Sends the suggestion request
+				</description>
+			</method>
+			<method name="_reposition" scope="private"
+				returnType="void">
+				<description>
+					Repositions the selector (if visible) to match the new
+					coords of the input.
+				</description>
+			</method>
+			<method name="_process" scope="private"
+				returnType="void">
+				<description>
+					Processes the resulting  from a suggestion request, adds 
+					options to the suggestion box.
+				</description>
+				<parameters>
+					<parameter name="objXML" type="XMLHTTPRequest" required="true">
+						<description>
+							The XMLHTTPRequest created by _sendRequest
+						</description>
+					</parameter>
+					<parameter name="jsonHeader" type="String" required="false">
+						<description>
+							the string of json commands to execute if the return 
+							type is json
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_parseXML" scope="private"
+				returnType="void">
+				<description>
+					Parses the XML result, adds options
+				</description>
+				<parameters>
+					<parameter name="xml" type="XML" required="true">
+						<description>
+							The XML of suggestions to parse
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_parseJSON" scope="private"
+				returnType="void">
+				<description>
+					Parses the JSON result, adds options 
+				</description>
+				<parameters>
+					<parameter name="json" type="String" required="true">
+						<description>
+							The json response to parse.
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_parseText" scope="private"
+				returnType="void">
+				<description>
+					Parses the TEXT result, adds options 
+				</description>
+				<parameters>
+					<parameter name="text" type="String" required="true">
+						<description>
+							The text response to parse.
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="_addOption" scope="private"
+				returnType="void">
+				<description>
+					Creates a suggestion option for the given suggestion,
+	 				adds it to the selector object.
+				</description>
+				<parameters>
+					<parameter name="suggestion" type="String" required="true">
+						<description>
+							The suggestion
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+			<method name="cancel" scope="public"
+				returnType="void">
+				<description>
+					Clears and hides the suggestion box.
+				</description>
+			</method>
+			<method name="select" scope="public"
+				returnType="void">
+				<description>
+					Captures the currently selected suggestion option 
+					to the input field
+				</description>
+			</method>
+			<method name="_interact" scope="private"
+				returnType="void">
+				<description>
+					Processes key interactions with the input field, 
+					including navigating the selected option with the 
+					up/down arrows, esc cancelling and selecting the option.
+				</description>
+				<parameters>
+					<parameter name="event" type="Event" required="true">
+						<description>
+							The interaction event
+						</description>
+					</parameter>
+				</parameters>
+			</method>
+		</methods>
+	</class>
+
+	<class name="AutoComplete.Options">
+		<description>
+			Helper class for defining options for the AutoComplete object
+		</description>
+		<properties>
+			<property name="RESULT_FORMAT_XML" type="String" default="xml"
+				scope="public" static="true">
+				<description>
+					Enumeration for XML result format
+	 				Be sure your response type is application/xml or text/xml.
+				</description>
+			</property>
+			<property name="RESULT_FORMAT_JSON" type="String" default="json"
+				scope="public" static="true">
+				<description>
+					Enumeration for JSON result format
+				</description>
+			</property>
+			<property name="RESULT_FORMAT_TEXT" type="String" default="text"
+				scope="public" static="true">
+				<description>
+					Enumeration for text result format
+				</description>
+			</property>
+			<property name="size" type="Number" default="10"
+				scope="public">
+				<description>Number of suggestions to display before scrolling</description>
+			</property>
+			<property name="cssClass"
+				scope="public" type="String">
+				<description>
+					CSS class name for autocomplete selector
+				</description>
+			</property>
+			<property name="onSelect"
+				scope="public" type="Function">
+				<description>
+					JavaScript callback function to execute upon selection
+				</description>
+			</property>
+			<property name="threshold" default="3"
+				scope="public" type="Number">
+				<description>
+					Minimum characters needed before an suggestion is executed
+				</description>
+			</property>
+			<property name="delay" scope="public" default="0"
+				type="Number">
+				<description>
+					Time delay between key stroke and execution
+				</description>
+			</property>
+			<property name="requestMethod" scope="public" type="String"
+				default="GET">
+				<description>
+					The request method to use when getting the suggestions
+				</description>
+			</property>
+			<property name="resultFormat" scope="public" type="String"
+				default="xml">
+				<description>
+					The format of the results retrieved (xml, text or json)
+				</description>
+			</property>
+		</properties>
+		<methods>
+			<method name="initialize" constructor="true"
+				returnType="void" scope="public">
+				<parameters>
+					<parameter name="overrides"
+						type="Object" required="false">
+					</parameter>
+				</parameters>
+			</method>
+		</methods>
+	</class>
+</classes>

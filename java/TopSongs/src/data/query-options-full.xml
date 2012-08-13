@@ -7,7 +7,11 @@
 </transform-results>
 
 <debug>true</debug>
-
+<constraint name="creator" >
+  <word>
+  	<field name="creator" />
+  </word>
+</constraint>
 <constraint name="artist" >
   <range collation="http://marklogic.com/collation/en/S1/AS/T00BB" type="xs:string" facet="true" >
     <element ns="http://marklogic.com/MLU/top-songs" name="artist" />

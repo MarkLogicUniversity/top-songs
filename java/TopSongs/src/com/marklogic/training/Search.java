@@ -24,6 +24,7 @@ import com.marklogic.training.model.SearchResults;
 import com.marklogic.training.model.Snippet;
 import com.marklogic.training.model.Song;
 import com.marklogic.training.model.FacetDetails;
+import com.marklogic.training.resourceext.SuggestionsManager;
 
 /*
  * this class encapsulates the MarkLogic Search API
@@ -32,6 +33,7 @@ public class Search {
 
 	private static final String FULL_OPTIONS = "full-options";
 	private static final String FACETS_ONLY = "facets-only-full-options";
+	private static final String SUGGESTIONS_ONLY = "suggestion-options";
 	private static final Logger logger = LoggerFactory.getLogger(Search.class);
 	private static MarkLogicConnection conn = null;
 	private SongBuilder songBuilder = null;
@@ -148,14 +150,18 @@ public class Search {
 			logger.debug("about to set snippets in song ");
 
 			song.setSnippets(snips);
-			//song.setFacets(facets);
-			//song.setFacetname(facetName);
 			songs[i] = song;
 			i++;
 		}
 		SearchResults results = new SearchResults(facets, songs, resultsHandle.getTotalResults(), queryMgr.getPageLength() );
 		return results;
 		
+	}
+	public String suggest(String q) {
+		logger.info("suggest called with q "+q);
+		SuggestionsManager sm = new SuggestionsManager(conn );
+
+		return sm.suggest(q);
 	}
 	/*
 	 * retrieve the details for one song

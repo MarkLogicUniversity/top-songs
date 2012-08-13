@@ -78,7 +78,11 @@
     <input type="submit" id="btnbday" value="go"/>
   </form>
   <div class="tinynoitalics"><img src="resources/images/checkblank.gif"/>(e.g. 1965-10-31)</div>
+  <br/>
+  User is <c:out value="${request.remoteuser}" />
+  <br/>
 </div>
+
 <div id="rightcol">
   <form name="form1" method="get" action="search" id="form1">
   <div id="searchdiv">

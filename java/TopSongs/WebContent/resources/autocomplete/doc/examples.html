@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--
+	//
+	// Copyright (c) 2008 Beau D. Scott | http://www.beauscott.com
+	//
+	// Permission is hereby granted, free of charge, to any person
+	// obtaining a copy of this software and associated documentation
+	// files (the "Software"), to deal in the Software without
+	// restriction, including without limitation the rights to use,
+	// copy, modify, merge, publish, distribute, sublicense, and/or sell
+	// copies of the Software, and to permit persons to whom the
+	// Software is furnished to do so, subject to the following
+	// conditions:
+	//
+	// The above copyright notice and this permission notice shall be
+	// included in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	// OTHER DEALINGS IN THE SOFTWARE.
+	//
+-->
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<script type="text/javascript" src="../lib/prototype/prototype.js"></script>
+		<script type="text/javascript" src="../lib/scriptaculous/scriptaculous.js"></script>
+		<script type="text/javascript" src="../src/AutoComplete.js"></script>
+		<title>AutoComplete 1.2 Scriptaculous Example</title>
+		<link rel="stylesheet" type="text/css" href="assets/style.css"></link>
+	</head>
+	<body>
+		<div id="header">
+			<div style="float: right"><a href="http://www.beauscott.com">BeauScott.com</a></div>
+			<h1>AutoComplete 1.2 Scriptaculous Example</h1>
+		</div>
+		<br/>
+		<div id="content">
+			<div style="text-align: center">
+				<a href="ns_examples.html">No Scriptaculous Effects</a> |
+				<a href="api.xml">Click here for the API document</a>
+				<br/>
+				<a href="../autocomplete.zip">Download now!</a> |
+				<a href="assets/ac.phps">Example results script</a>
+			</div>
+			<br/><br/>
+			<div>
+				In this example, I use the same dictionary I used in the WordLadder coding challenge. Simply start typing a word and
+				the suggest tool will give you results.
+			</div>
+			<form method="get">"
+			<input type="text" id="my_ac" name="my_ac" size="45" autocomplete="off"/>
+			</form>
+			<script type="text/javascript">
+				new AutoComplete('my_ac', 'assets/ac.php?m=xml&s=',{delay: .25});
+			</script>
+			<br/><span style="color: gray; font-size: small">(3 letters minimum required to trigger a suggestion)</span>
+			<h3>Source Code:</h3>
+			<code style="white-space:pre">
+&lt;script type="text/javascript" src="../lib/prototype/prototype.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../lib/scriptaculous/scriptaculous.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../src/autocomplete.js"&gt;&lt;/script&gt;
+&lt;input type="text" id="my_ac" name="my_ac" size="45" autocomplete="off"/&gt;
+&lt;script type="text/javascript"&gt;
+	new AutoComplete('my_ac', 'assets/ac.php?m=xml&s=', {
+		delay: 0.25
+		// Using the default XML result format
+	});
+&lt;/script&gt;
+			</code>
+			<br/><br/>
+			<div>
+				Example using a Json-encoded result (either the X-JSON header or in the response body)
+			</div>
+			<input type="text" id="my_ac2" name="my_ac" size="45" autocomplete="off"/>
+			<script type="text/javascript">
+				new AutoComplete('my_ac2', 'assets/ac.php?m=json&s=',{
+					delay: .25,
+					resultFormat: AutoComplete.Options.RESULT_FORMAT_JSON
+				});
+			</script>
+			<br/><span style="color: gray; font-size: small">(3 letters minimum required to trigger a suggestion)</span>
+			<h3>Source Code:</h3>
+			<code style="white-space:pre">
+&lt;script type="text/javascript" src="../lib/prototype/prototype.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../lib/scriptaculous/scriptaculous.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../src/autocomplete.js"&gt;&lt;/script&gt;
+&lt;input type="text" id="my_ac" name="my_ac" size="45" autocomplete="off"/&gt;
+&lt;script type="text/javascript"&gt;
+	new AutoComplete('my_ac2', 'assets/ac.php?m=json&s=', {
+		delay: 0.25,
+		resultFormat: AutoComplete.Options.RESULT_FORMAT_JSON
+	});
+&lt;/script&gt;
+			</code>
+			<br/><br/>
+			<div>
+				Example using plain text results
+			</div>
+			<input type="text" id="my_ac3" name="my_ac" size="45" autocomplete="off"/>
+			<script type="text/javascript">
+				new AutoComplete('my_ac3', 'assets/ac.php?m=text&s=',{
+					delay: .25,
+					resultFormat: AutoComplete.Options.RESULT_FORMAT_TEXT
+				});
+			</script>
+			<br/><span style="color: gray; font-size: small">(3 letters minimum required to trigger a suggestion)</span>
+			<h3>Source Code:</h3>
+			<code style="white-space:pre">
+&lt;script type="text/javascript" src="../lib/prototype/prototype.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../lib/scriptaculous/scriptaculous.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="../src/autocomplete.js"&gt;&lt;/script&gt;
+&lt;input type="text" id="my_ac3" name="my_ac" size="45" autocomplete="off"/&gt;
+&lt;script type="text/javascript"&gt;
+	new AutoComplete('my_ac3', 'assets/ac.php?m=text&s=', {
+		delay: 0.25,
+		resultFormat: AutoComplete.Options.RESULT_FORMAT_TEXT
+	});
+&lt;/script&gt;
+			</code>
+
+	</body>
+</html>

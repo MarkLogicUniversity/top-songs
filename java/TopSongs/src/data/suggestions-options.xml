@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<options xmlns="http://marklogic.com/appservices/search">
+    <default-suggestion-source>
+        <range type="xs:string" collation="http://marklogic.com/collation/en/S1/AS/T00BB">
+            <element ns="http://marklogic.com/MLU/top-songs" name="title"/>
+        </range>
+    </default-suggestion-source>
+	<debug>true</debug>
+</options>

@@ -14,10 +14,12 @@ import com.marklogic.client.io.StringHandle;
 public class LoadOptions {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoadOptions.class);
-//	private static final String OPTIONS_NAME = "full-options";
-//	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";	
-	private static final String OPTIONS_NAME = "facets-only-full-options";
-	private static final String OPTIONS_FILENAME = "data/query-options-facets-only.xml";	
+	private static final String OPTIONS_NAME = "full-options";
+	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";
+//	private static final String OPTIONS_NAME = "facets-only-full-options";
+//	private static final String OPTIONS_FILENAME = "data/query-options-facets-only.xml";	
+//	private static final String OPTIONS_NAME = "suggestion-options";
+//	private static final String OPTIONS_FILENAME = "data/suggestions-options.xml";	
 
 	/*
 	 * Important to note that when reading options from a file you can use any normal handle - there is no need to use the QueryOptionsHandle.

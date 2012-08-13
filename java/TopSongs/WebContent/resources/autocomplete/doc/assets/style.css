@@ -1,0 +1,202 @@
+/*
+	// 
+	// Copyright (c) 2008 Beau D. Scott | http://www.beauscott.com
+	// 
+	// Permission is hereby granted, free of charge, to any person
+	// obtaining a copy of this software and associated documentation
+	// files (the "Software"), to deal in the Software without
+	// restriction, including without limitation the rights to use,
+	// copy, modify, merge, publish, distribute, sublicense, and/or sell
+	// copies of the Software, and to permit persons to whom the
+	// Software is furnished to do so, subject to the following
+	// conditions:
+	// 
+	// The above copyright notice and this permission notice shall be
+	// included in all copies or substantial portions of the Software.
+	// 
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+	// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+	// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+	// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	// OTHER DEALINGS IN THE SOFTWARE.
+	// 
+*/
+body {
+	padding: 0px;
+	margin: 0px;
+	font-family: Verdana, tahoma, sans-serif;
+}
+#header {
+	padding: 10px;
+	margin: 10px;
+	background-color: #000099;
+	color:	white;
+}
+
+#header a {
+	color: white;
+}
+
+#backlinks {
+	float: right
+}
+
+#content {
+	margin: 10px;
+}
+
+h1 {
+	color: white;
+	font-size: 28px;
+	font-weight: bold;
+	margin: 0px;
+	padding: 0px;
+}
+
+h2 {
+	color: black;
+	font-size: 24px;
+	font-weight: bold;
+	display: block;
+	padding: 2px;
+	margin: 2px;
+}
+
+pre {
+	display: inline;	
+}
+
+h3 {
+	border-bottom: 1px solid #EFEFEF;
+	background-color: #99cccc;
+	font-size: 16px;
+	font-weight: bold;
+	display: block;
+}
+
+h4 {
+	color: black;
+	font-size: 14px;
+	font-weight: bold;
+	display: block;
+}
+
+
+ul {
+	list-style-type: none;
+}
+
+.class {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+table {
+	border: none;
+	border-collapse: collapse;
+	width: 100%;	
+}
+
+td {
+	text-align: left;
+	vertical-align: top;	
+}
+
+#keys {
+	vertical-align: top;
+	text-align: left;
+	padding: 0px;	
+}
+
+#descriptions {
+	vertical-align: top;
+	text-align: left;
+	padding: 10px;
+}
+
+#keys_div {
+	padding: 10px 10px 10px 0px;
+	background-color: #f7f6c4;
+	border-right: 1px solid #000000;	
+}
+
+.public_link {
+	color: blue;
+	font-weight: normal;
+}
+
+.protected_link {
+	color: green;	
+	font-weight: normal;
+}
+
+.private_link {
+	color: red;	
+	font-weight: normal;
+}
+
+.class_title {
+	color: black;
+	font-size: 16px;
+	background-color: #EFEFEF;
+	padding: 10px;
+	border-bottom: 1px solid black;
+	clear: both;
+}
+
+.constructor {
+	color: green;
+	font-weight: bold;	
+}
+
+.member {
+	border-bottom: 1px dashed #EFEFEF;
+	padding: 10px;
+	clear: both;
+}
+
+.topAnchor {
+	float: right;
+	font-size: 11px;
+}
+
+code {
+	background-color: #EFEFEF;
+	display: block;
+	padding: 5px;
+	margin: 5px;
+}
+
+.code {
+	font-family: Courier, console, system;
+	font-size: 12px;
+	font-weight: normal;
+	color: black;	
+}
+
+.type {
+	color: #0000FF;	
+}
+
+#copyright {
+	font-size: 11px;
+	border-top: 1px solid black;
+	padding: 5px 15px;
+	text-align: center;	
+}
+
+.example {
+	padding: 10px;
+	margin: 10px;	
+}
+
+.right {
+	float: right; margin: 20px;
+}
+
+.left {
+	float: left; margin: 20px;
+}
