@@ -79,7 +79,39 @@
   </form>
   <div class="tinynoitalics"><img src="resources/images/checkblank.gif"/>(e.g. 1965-10-31)</div>
   <br/>
-  User is <c:out value="${request.remoteuser}" />
+  <div class="padleft">
+  	 <c:choose>
+	   <c:when test="${login =='error' }">
+	     <div class="purplesubheading">administrator login</div>
+	     <form name="formlogin" method="post" action="login.html" id="formlogin">
+	         <input type="text" name="username" id="username" size="15"/><br/>
+	         <input type="password" name="password" id="password" size="10"/> 
+	         <input type="submit" id="btnlogin" value="go"/><br/>
+	         <div class="tinynoitalics">(login/password)</div>       
+	     </form>
+	     <div class="purplesubheading"><c:out value="${loginmsg}" /></div>
+ 	     
+	   </c:when> 
+	   <c:when test="${login =='ok' }">
+	   		<c:set var="login" value="${param.login}" />
+	     <div class="purplesubheading"><c:out value="${loginmsg}" /></div>
+	     <a href="insertform.html">insert new song</a>&#160;
+	     <a href="logout.html">log out</a>
+	   </c:when> 
+	   <c:otherwise >
+  
+	     <div class="purplesubheading">administrator login</div>
+	     <form name="formlogin" method="post" action="login.html" id="formlogin">
+	         <input type="text" name="username" id="username" size="15"/><br/>
+	         <input type="password" name="password" id="password" size="10"/> 
+	         <input type="submit" id="btnlogin" value="go"/><br/>
+	         <div class="tinynoitalics">(login/password)</div>       
+	     </form>
+	     
+	   </c:otherwise> 
+	 </c:choose>            
+  </div> 
+ 
   <br/>
 </div>
 

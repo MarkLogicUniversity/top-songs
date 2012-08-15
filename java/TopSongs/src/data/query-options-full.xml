@@ -7,6 +7,11 @@
 </transform-results>
 
 <debug>true</debug>
+<constraint name="title" >
+  <value>
+  	<element ns="http://marklogic.com/MLU/top-songs" name="title" />
+  </value>
+</constraint>
 <constraint name="creator" >
   <word>
   	<field name="creator" />

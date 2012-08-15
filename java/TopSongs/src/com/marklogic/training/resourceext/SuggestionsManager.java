@@ -98,23 +98,14 @@ public class SuggestionsManager extends ResourceManager {
 	 */
 	public static void main(String[] args) {
 		try {
-			MarkLogicConnection conn =  MarkLogicConnection.getInstance("data/marklogic.properties");
+			MarkLogicConnection conn =  new MarkLogicConnection("data/marklogic.properties");
 			
 			try {
 				SuggestionsManager sm = new SuggestionsManager(conn );
 				
-/*				logger.info(" creating suggestions client"  );
-				logger.info(" calling suggestArray()..... "  );
-				String[] suggs = sm.suggestArray("*night*");
-				logger.info(" ....DONE "  );
-				for (String sugg: suggs) {
-					logger.info(" suggested match "+sugg);
-				}
-*/				logger.info(" calling suggest()..... "  );
+				logger.info(" calling suggest()..... "  );
 				logger.info(" suggest string " + sm.suggest("*night*") ); 
-			
 					
-		
 			} catch (Exception e) {
 				logger.error("Exception : " + e.toString() );
 			} finally { 

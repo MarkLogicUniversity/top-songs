@@ -12,7 +12,7 @@ public class AdvancedHelper {
 	
 	private static final Logger logger = LoggerFactory.getLogger(AdvancedHelper.class);
 
-	public static String buildQueryString(String keywords, String type, String exclude, String creator, String songtitle) {
+	public static String buildQueryString(String keywords, String type, String exclude, String genre, String creator, String songtitle) {
 		
 		String[] tokenArr = keywords.split(" ");
 		List<String> tokens = new ArrayList<String>(Arrays.asList(tokenArr));
@@ -47,6 +47,26 @@ public class AdvancedHelper {
 			}		
 		}
 		
+		if (genre != "") {	
+			if (!genre.equals("all")) {
+				String[] genreArr = creator.split(" ");
+				query.append(" genre:");
+				logger.info("genre array contains elements "+genreArr.length);
+				if (genreArr.length == 1 ) {
+					query.append(genre);			
+				} else {
+					List<String> genres = new ArrayList<String>(Arrays.asList(genreArr));
+					query.append("\"");
+					for (Iterator<String> i = genres.iterator(); i.hasNext(); ) {
+						query.append(i.next());
+						if (i.hasNext())
+							query.append(" ");
+					}
+					query.append("\"");				
+				}
+			} 
+			
+		}
 		if (creator != "") {		
 			String[] creatorArr = creator.split(" ");
 			query.append(" creator:");
@@ -66,7 +86,7 @@ public class AdvancedHelper {
 			
 		}
 		if (songtitle != ""){
-			query.append("title:\""+songtitle+"\"");
+			query.append(" title:\""+songtitle+"\"");
 			query.append(" ");
 		}
 		

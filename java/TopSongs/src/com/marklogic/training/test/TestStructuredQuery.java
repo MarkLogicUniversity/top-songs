@@ -20,8 +20,8 @@ import com.marklogic.client.query.KeyValueQueryDefinition;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
-import com.marklogic.training.LoadOptions;
 import com.marklogic.training.MarkLogicConnection;
+import com.marklogic.training.util.LoadOptions;
 
 public class TestStructuredQuery {
 	private static final Logger logger = LoggerFactory.getLogger(TestStructuredQuery.class);
@@ -37,7 +37,7 @@ public class TestStructuredQuery {
 		try {
 			// we are using admin-role credentials in order to write new query options
 			// (note the properties filename)
-			MarkLogicConnection conn =  MarkLogicConnection.getInstance("data/marklogic-admin.properties");
+			MarkLogicConnection conn = new MarkLogicConnection("data/marklogic-admin.properties");
 			
 			try {
 				
@@ -87,7 +87,7 @@ public class TestStructuredQuery {
 	public static void testStructuredQuery() {
 		try {
 
-			MarkLogicConnection conn =  MarkLogicConnection.getInstance("data/marklogic.properties");
+			MarkLogicConnection conn =  new MarkLogicConnection("data/marklogic.properties");
 			
 			try {
 	

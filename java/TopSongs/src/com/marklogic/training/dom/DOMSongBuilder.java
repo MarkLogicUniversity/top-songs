@@ -32,6 +32,11 @@ public class DOMSongBuilder implements SongBuilder {
 	public DOMSongBuilder(MarkLogicConnection conn) {
 		this.conn = conn;
 	}
+	
+	@Override
+	public void setConnection(MarkLogicConnection conn) {
+		this.conn = conn;
+	}
 
 	@Override
 	public Song getSongDetails(String uri) {
@@ -74,6 +79,11 @@ public class DOMSongBuilder implements SongBuilder {
 	@Override
 	public Song getSong(String uri) {
 		return getSongInternal(uri,getDOMDocument(uri));
+	}
+	@Override	
+	public void insertSong(String title, String artist, String album, String genres, String writers, 
+			String producers, String label, String description,String weeks) {
+		//no-op
 	}
 
 	private Song getSongInternal(String uri, Document doc) {

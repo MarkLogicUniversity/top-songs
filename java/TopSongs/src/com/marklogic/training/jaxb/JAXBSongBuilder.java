@@ -1,13 +1,22 @@
 package com.marklogic.training.jaxb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.JAXBHandle;
+import com.marklogic.client.io.StringHandle;
 import com.marklogic.training.MarkLogicConnection;
 import com.marklogic.training.SongBuilder;
 import com.marklogic.training.model.Song;
@@ -22,6 +31,11 @@ public class JAXBSongBuilder implements SongBuilder {
 		this.conn = conn;
 	}
 
+	@Override
+	public void setConnection(MarkLogicConnection conn) {
+		this.conn = conn;
+	}
+	
 	@Override
 	public Song getSongDetails(String uri) {
 		
@@ -69,6 +83,103 @@ public class JAXBSongBuilder implements SongBuilder {
 			return null;
 
 		return getSongInternal(uri, topsong);
+	}
+	
+	@Override
+	public void insertSong(String title, String artist, String album, String genres, String writers, 
+			String producers, String label, String description, String weekString) 
+	{
+		List<String> week = new ArrayList<String>();
+		String[] weekTokens = weekString.split(",");
+		logger.debug("found "+weekTokens.length + "weeks");
+		for (String weekToken: weekTokens) {
+			logger.debug("week is "+ weekToken);
+			week.add(weekToken);
+		}
+		
+		Weeks weeks = new Weeks();
+		if (weekTokens.length == 0)
+			weeks.setLast("");
+		else
+			weeks.setLast(weekTokens[weekTokens.length-1]);
+		
+		weeks.setWeek(week);
+		
+		
+		String[] genreTokens = genres.split(",");
+		List<String> gs = new ArrayList<String>();
+		for (String genreToken: genreTokens) {
+			gs.add(genreToken);
+		}
+		Genres g = new Genres(gs); 
+		
+		List<String> ps = new ArrayList<String>();
+		String[] producerTokens = producers.split(",");
+		for (String producerToken: producerTokens) 
+			ps.add(producerToken);
+		
+		Producers p = new Producers(ps);
+				
+		List<String> ws = new ArrayList<String>();
+		String[] writerTokens = writers.split(",");
+		for (String writerToken: writerTokens) 
+			ws.add(writerToken);		
+		Writers w = new Writers(ws);
+		
+		Album a = new Album(album,"");
+		
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = null;
+		Document doc = null;
+		Element descr = null;
+		try {
+			docBuilder = docFactory.newDocumentBuilder();
+			doc = docBuilder.newDocument();
+			Element d = doc.createElement("descr");
+			d.appendChild(doc.createTextNode(description));
+			descr = d;
+		} catch (ParserConfigurationException e) {
+			logger.error("caught exception trying to create DOM tree"+e.toString());
+			
+		}	
+		
+		
+		Topsong ts = new Topsong();
+		ts.setAlbum(a);
+		ts.setArtist(artist);
+		ts.setDescr(descr);
+		ts.setFormats(null);
+		ts.setGenres(g);
+		ts.setLabel(label);
+		ts.setLengths(null);
+		ts.setProducers(p);
+		ts.setWeeks(weeks);
+		ts.setRecorded("");
+		ts.setReleased("");
+		ts.setTitle(title);
+		ts.setWriters(w);
+		
+		// create a manager for XML documents
+		XMLDocumentManager docMgr = conn.getClient().newXMLDocumentManager();	
+		
+		JAXBContext context = null;
+		try {
+			context = JAXBContext.newInstance(Topsong.class);
+		} catch (JAXBException e) {
+			logger.error("caught exception creating JAXB context"+e.toString());
+		
+		}
+
+		JAXBHandle writeHandle = new JAXBHandle(context);
+		String uri = ("/songs/"+artist+"+"+title+".xml").replaceAll(" ", "-");
+		logger.debug("writing song " + uri+" to ML");
+		writeHandle.set(ts);
+		docMgr.write(uri, writeHandle);
+		// read the persisted XML document for the logging message
+		String songDoc = docMgr.read(uri, new StringHandle()).get();
+		
+		logger.debug("read document: \n"+songDoc);						
+
 	}
 	
 	private Song getSongInternal(String uri,Topsong topsong) {

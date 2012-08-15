@@ -1,34 +1,0 @@
-8
-
-dir
-76
-svn://beauscott.com/widgets/AutoComplete/lib
-svn://beauscott.com
-
-
-
-2008-06-05T22:56:17.463940Z
-40
-beau6183
-
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-4c8f6fa0-3a3c-0410-88a0-c2639e18b265
-
-scriptaculous
-dir
-
-prototype
-dir
-

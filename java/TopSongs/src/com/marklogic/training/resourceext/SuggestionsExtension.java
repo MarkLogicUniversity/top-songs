@@ -29,7 +29,7 @@ public class SuggestionsExtension {
 		try {
 			// we are using admin-role credentials in order to write new query options
 			// (note the properties filename)
-			MarkLogicConnection conn =  MarkLogicConnection.getInstance("data/marklogic-admin.properties");
+			MarkLogicConnection conn =  new MarkLogicConnection("data/marklogic-admin.properties");
 			
 			try {
 		

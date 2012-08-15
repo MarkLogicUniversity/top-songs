@@ -12,6 +12,7 @@ import java.lang.Math;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
@@ -21,11 +22,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.marklogic.training.model.Pagination;
 import com.marklogic.training.model.Query;
 import com.marklogic.training.model.SearchResults;
 import com.marklogic.training.model.Song;
+import com.marklogic.training.security.MarkLogicCredentials;
 
 @Controller
 @RequestMapping("/search")
@@ -33,12 +37,22 @@ public class SearchController {
 	
 	private static final Logger logger = LoggerFactory.getLogger(SearchController.class);
 	private static final String sortOperator = "sort:";  
+	/*
+	 * this object encapsulates credentials, authentication and authorisation for login  pages.
+	 * 
+	 */
+	private MarkLogicCredentials credentials = null;
 	   
 	/*
 	 * the Search object will be used to to search the MarkLogic database
 	 */
-	private Search search = null;
-	
+	private static Search search = null;
+	/*
+	 * static accessor for the search object
+	 */
+	public static Search getSearchObject() {
+		return search;
+	}
 	/**
 	 * Routes the user to the advanced search page.
 	 */
@@ -81,7 +95,10 @@ public class SearchController {
 		model.addAttribute("query", query);
 		model.addAttribute("sortoptions", options);
 		model.addAttribute("page", pagination);
-		
+		if (credentials.isLoggedOn()) {
+			model.addAttribute("login", "ok");
+			model.addAttribute("loginmsg", " you are logged in as "+credentials.getCurrentLevel());
+		}
 		return "search";
 	}
 
@@ -112,7 +129,7 @@ public class SearchController {
 		// set the display mode for the JSP  
 		model.addAttribute("mode", "detail");
 		//now call search to get the facets
-		SearchResults results = null;
+		SearchResults results = null; 
 
 		try {
 			 
@@ -125,6 +142,10 @@ public class SearchController {
 		
 		// add the display data objects for processing in the JSP
 		model.addAttribute("results", results);
+		if (credentials.isLoggedOn()) {
+			model.addAttribute("login", "ok");
+			model.addAttribute("loginmsg", " you are logged in as "+credentials.getCurrentLevel());
+		}
 	
 		return "search";
 	}
@@ -177,39 +198,15 @@ public class SearchController {
 		logger.info("read the following keywords " + keywords);
 		logger.info(" search with the following type " + type);
 		logger.info(" search with the following exclusions " + exclude);
+		logger.info(" search with the following genre " + genre);
 		logger.info(" search with field creator " + creator);
 		logger.info(" search with song title " + songtitle);
 		
-		String arg = AdvancedHelper.buildQueryString(keywords, type, exclude, creator, songtitle);
+		String arg = AdvancedHelper.buildQueryString(keywords, type, exclude, genre, creator, songtitle);
 		arg = arg + " sort:newest";
 		logger.info("effective search arg = "+arg );
-
-		Sortoptions[] options = fillSortbyOptions(arg);
-
-		SearchResults results = null;
-		Query query = new Query();
-		query.setParameter(arg);
-		try {
-			 
-			results = search.search(arg, 1, false);
-			
-		} catch (Exception e ) {
-			logger.error("caught exception in search() "+e.toString() );
-
-		}
-		Pagination pagination = calculatePaginationDetails(1, results.getTotal(), results.getPageLength() );
-		
-		logger.debug("pagination details follow "+ pagination);
-		logger.info("search arg before JSP " + query.getParameter());
-		// set the display mode for the JSP  
-		model.addAttribute("mode", "list");
-		// add the display data objects for processing in the JSP
-		model.addAttribute("results", results);
-		model.addAttribute("sortoptions", options);		
-		model.addAttribute("query", query);
-		model.addAttribute("page", pagination);
-		
-		return "search";
+	
+		return search(arg,null,null,1,model);
 		
 	}	
 	/**
@@ -236,6 +233,103 @@ public class SearchController {
 		}
 	}
 	/**
+	 * perform an administrator or writer login by 
+	 * creating a new connection object with the corresponding credentials
+	 */
+	@RequestMapping("login.html")	
+	public String login(@RequestParam("username") String username, @RequestParam("password") String password, Model model) {
+		
+		logger.info(" login with user.."+username);
+		logger.info(" login with password.."+password);
+		String allowedLevel = "writer";
+
+		if (!credentials.login(username, password, allowedLevel)) {
+			logger.error(" failed to authenticate or authorise user "+username+" with password " +password );
+			model.addAttribute("login", "error");
+			model.addAttribute("loginmsg", " failed to authenticate or authorise user "+username+" with password " +password);	
+			return search("sort:newest",null,null,1,model);
+		} 
+		
+		// create a new MarkLogic Connection with writer credentials
+		MarkLogicConnection writerConn = null;
+		try {
+			writerConn = new MarkLogicConnection(username,password);
+		} catch (Exception e) {
+			logger.error("caught exception in login"+e.toString());
+			//return error
+		}
+		search.setConnection(writerConn);	
+		
+		
+		return search("sort:newest",null,null,1,model);
+	}
+	/**
+	 * perform an administrator or writer logout by invalidating the old connection 
+	 * and creating a new default connection.
+	 */
+	@RequestMapping("logout.html")	
+	public String logout(Model model) {
+		
+		logger.info(" in logout ...");
+		
+		credentials.logout();
+		// restore the default MarkLogic Connection with read only credentials
+		search.setConnection(new MarkLogicConnection());
+		return search("sort:newest",null,null,1,model);
+		
+	}
+	/**
+	 * present the form to capture the details of a new song - 
+	 * this can only be performed by user with writer authorisations
+	 * 
+	 */
+	@RequestMapping("insertform.html")	
+	public String insertForm(Model model) {
+
+		logger.info(" insert song form page to be presented ..");
+		if (credentials.isLoggedOn()) {
+			model.addAttribute("login", "ok");
+			model.addAttribute("loginmsg", " you are logged in as "+credentials.getCurrentLevel());
+		}
+
+		return "insert";
+	}
+	/**
+	 * insert a new song to the database -
+	 * this can only be performed by user with writer authorization
+	 * 
+	 */
+	@RequestMapping("insertsong.html")	
+	public String insertSong(@RequestParam(value="title") String title, 
+			  @RequestParam(value="artist") String artist,
+			  @RequestParam(value="album") String album,
+			  @RequestParam(value="genres") String genres,
+			  @RequestParam(value="writers") String writers,
+			  @RequestParam(value="producers") String producers,
+			  @RequestParam(value="label") String label,
+			  @RequestParam(value="description") String description,
+			  @RequestParam(value="weeks") String weeks,
+			  @RequestParam(value="insertbtn") String insertbtn,
+			  Model model) 
+	
+	{
+
+		logger.info(" inserting song ..");
+		if (credentials.isLoggedOn()) {
+			model.addAttribute("login", "ok");
+			model.addAttribute("loginmsg", " you are logged in as "+credentials.getCurrentLevel());
+		}
+		
+		search.insertSong(title, artist, album, genres, writers, producers, label, description, weeks);
+		
+		model.addAttribute("insert","loaded");
+		
+
+		return "insert";
+	}
+
+
+	/**
 	 * Routes the user to the special search results based on his birthday
 	 */
 	@RequestMapping("bday.html")	
@@ -254,6 +348,12 @@ public class SearchController {
 		logger.info("servlet init() called...");
 		try {
 			search = new Search();
+			// create and initialise credentials object
+			credentials = new MarkLogicCredentials();
+			credentials.addCredentials("rest-reader-user", "reader", "rest-reader-role", "reader");
+			credentials.addCredentials("rest-writer-user", "writer", "rest-writer-role", "writer");
+			credentials.addCredentials("rest-admin-user", "admin", "rest-admin-role", "admin");
+
 		} catch (Exception e) {
 			logger.error("Failed to initialise MarkLogic Search - caught the following exception "+e.toString() );
 			logger.error("Failed to initialise MarkLogic Search - search not possible at this time!!!" );
@@ -274,6 +374,10 @@ public class SearchController {
 			logger.error("Failed to close MarkLogic Search - check MarkLogic Server Health!!!" );
 			
 		}
+	}
+	public static HttpSession session() {
+	    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+	    return attr.getRequest().getSession(true); // true == allow create
 	}
 	/*
 	 * user parameter validation 

@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.util;
 
 import java.io.InputStream;
 
@@ -10,12 +10,15 @@ import com.marklogic.client.admin.config.QueryOptions.QueryTransformResults;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.client.io.QueryOptionsHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.training.MarkLogicConnection;
 
 public class LoadOptions {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoadOptions.class);
-	private static final String OPTIONS_NAME = "full-options";
-	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";
+	private static final String OPTIONS_NAME = "genre-options";
+	private static final String OPTIONS_FILENAME = "data/query-options-genre.xml";
+//	private static final String OPTIONS_NAME = "full-options";
+//	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";
 //	private static final String OPTIONS_NAME = "facets-only-full-options";
 //	private static final String OPTIONS_FILENAME = "data/query-options-facets-only.xml";	
 //	private static final String OPTIONS_NAME = "suggestion-options";
@@ -29,7 +32,7 @@ public class LoadOptions {
 		try {
 			// we are using admin-role credentials in order to write new query options
 			// (note the properties filename)
-			MarkLogicConnection conn =  MarkLogicConnection.getInstance("data/marklogic-admin.properties");
+			MarkLogicConnection conn =  new MarkLogicConnection("data/marklogic-admin.properties");
 			
 			try {
 				

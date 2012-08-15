@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.test;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -18,9 +18,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.marklogic.client.admin.ServerConfigurationManager;
 import com.marklogic.client.document.XMLDocumentManager;
 import com.marklogic.client.io.JAXBHandle;
 import com.marklogic.client.io.StringHandle;
+import com.marklogic.training.MarkLogicConnection;
 import com.marklogic.training.jaxb.Album;
 import com.marklogic.training.jaxb.Formats;
 import com.marklogic.training.jaxb.Genres;
@@ -87,10 +89,11 @@ public class TestJAXB {
 	}
 	public static void load() {
 		try {
-			MarkLogicConnection conn = MarkLogicConnection.getInstance();
+			MarkLogicConnection conn = new MarkLogicConnection();
 
 			try {
-
+				
+				
 				// create a manager for XML documents
 				XMLDocumentManager docMgr = conn.getClient().newXMLDocumentManager();	
 				
@@ -118,7 +121,7 @@ public class TestJAXB {
 						
 /*				Topsong song1 = createSong();
 				JAXBHandle writeHandle = new JAXBHandle(context);
-				String uri = "/songs/arse";
+				String uri = "/songs/foo";
 				writeHandle.set(song1);
 				docMgr.write(uri, writeHandle);
 				// read the persisted XML document for the logging message
@@ -140,7 +143,6 @@ public class TestJAXB {
 
 		
 	}
-		
 	/**
 	 * @param args
 	 */
