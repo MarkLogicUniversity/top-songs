@@ -78,7 +78,7 @@ public class SearchController {
 		query.setParameter(arg);
 		try {
 			 
-			results = search.search(arg, start, false);
+			results = search.search(arg, start, "FALSE");
 			
 		} catch (Exception e ) {
 			logger.error("caught exception in search() "+e.toString() );
@@ -130,16 +130,20 @@ public class SearchController {
 		model.addAttribute("mode", "detail");
 		//now call search to get the facets
 		SearchResults results = null; 
+		arg = "sort:newest";
+		Query query = new Query();
+		query.setParameter(arg);
 
 		try {
 			 
-			results = search.search("sort:newest", 1, true);
+			results = search.search(arg, 1, "TRUEALL");
 			
 		} catch (Exception e ) {
 			logger.error("caught exception in search() "+e.toString() );
 
 		}
-		
+		model.addAttribute("query", query);
+
 		// add the display data objects for processing in the JSP
 		model.addAttribute("results", results);
 		if (credentials.isLoggedOn()) {
@@ -177,6 +181,25 @@ public class SearchController {
 		
 		logger.info("Routing to advanced search page ");
 		
+		SearchResults results = null; 
+		String arg = "";
+
+		try {
+			 // retrieve only the genre facets
+			results = search.search(arg, 1, "TRUEGENRE");
+			
+		} catch (Exception e ) {
+			logger.error("caught exception in search() "+e.toString() );
+
+		}
+
+		// add the display data objects for processing in the JSP
+		model.addAttribute("results", results);
+		if (credentials.isLoggedOn()) {
+			model.addAttribute("login", "ok");
+			model.addAttribute("loginmsg", " you are logged in as "+credentials.getCurrentLevel());
+		}
+			
 		return "advanced";
 	}  
 	/**

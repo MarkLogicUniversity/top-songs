@@ -48,29 +48,27 @@ public class AdvancedHelper {
 		}
 		
 		if (genre != "") {	
-			if (!genre.equals("all")) {
-				String[] genreArr = creator.split(" ");
-				query.append(" genre:");
-				logger.info("genre array contains elements "+genreArr.length);
-				if (genreArr.length == 1 ) {
-					query.append(genre);			
-				} else {
-					List<String> genres = new ArrayList<String>(Arrays.asList(genreArr));
-					query.append("\"");
-					for (Iterator<String> i = genres.iterator(); i.hasNext(); ) {
-						query.append(i.next());
-						if (i.hasNext())
-							query.append(" ");
-					}
-					query.append("\"");				
+			String[] genreArr = genre.split(" ");
+			query.append(" genre:");
+			logger.debug("genre array contains elements "+genreArr.length);
+			if (genreArr.length == 1 ) {
+				query.append(genre);			
+			} else {
+				List<String> genres = new ArrayList<String>(Arrays.asList(genreArr));
+				query.append("\"");
+				for (Iterator<String> i = genres.iterator(); i.hasNext(); ) {
+					query.append(i.next());
+					if (i.hasNext())
+						query.append(" ");
 				}
-			} 
+				query.append("\"");				
+			}
 			
 		}
 		if (creator != "") {		
 			String[] creatorArr = creator.split(" ");
 			query.append(" creator:");
-			logger.info("creator array contains elements "+creatorArr.length);
+			logger.debug("creator array contains elements "+creatorArr.length);
 			if (creatorArr.length == 1 ) {
 				query.append(creator);			
 			} else {

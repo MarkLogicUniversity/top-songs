@@ -1,4 +1,7 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@	taglib	uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -50,6 +53,14 @@
       <td align="right">genre:</td>
       <td colspan="4"><select name="genre" id="genre">
         <option value="all">all</option>
+       	<c:forEach items="${results.facets}" var="facet">
+       		<c:forEach items="${facet.facetvalues}" var="facetvalue" >
+       			<c:if test="${facetvalue.name !=''}" >	
+       				<option value="${fn:toLowerCase(facetvalue.name)}"><c:out value="${fn:toLowerCase(facetvalue.name)}"/> [<c:out value="${facetvalue.count}" />]</option>
+       			</c:if>	       		
+       		</c:forEach>
+       	</c:forEach>
+        
       </select></td>
     </tr>
     <tr>

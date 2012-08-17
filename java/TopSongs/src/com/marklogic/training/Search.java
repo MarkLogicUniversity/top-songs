@@ -64,16 +64,20 @@ public class Search {
 	 * 3. parse the results into a tree
 	 * 4. create a POJO with the results for processing in the view.
 	 */
-	public SearchResults search(String arg, long start, boolean facetsOnly) {
+	public SearchResults search(String arg, long start, String facetsOnly) {
 		
 		logger.info("Performing search() with arg = "+(arg == ""?" EMPTY_STRING":arg) );
 		
-		String options;
-		if (facetsOnly)
+		String options = null;
+		
+		if (facetsOnly == "TRUEALL")
 			options = FACETS_ONLY;
+		else if (facetsOnly == "TRUEGENRE")
+			options = GENRE_ONLY;
 		else
 			options = FULL_OPTIONS;
-			
+		
+		logger.info(" options uri set to "+ options);
 		
 		// create a manager for searching
 		QueryManager queryMgr = conn.getClient().newQueryManager();
@@ -94,7 +98,7 @@ public class Search {
 		
 		logger.info("Matched "+resultsHandle.getTotalResults()+
 				" documents with '"+querydef.getCriteria()+"'\n");
-		
+
 		logReports(resultsHandle);
 		Song[] songs = getSongs(resultsHandle);
 		Facet[] facets = getFacets(resultsHandle);
@@ -199,18 +203,20 @@ public class Search {
 		logger.info("Listing "+docSummaries.length+" documents");
 		
 		Song[] songs = new Song[docSummaries.length];
-		int i = 0;
-		for (MatchDocumentSummary docSummary: docSummaries) {
-						
-			Snippet[] snips = getSnippets(docSummary);
-			
-			// read constituent documents			
-			Song song = songBuilder.getSong(docSummary.getUri() );
-			logger.debug("about to set snippets in song ");
-
-			song.setSnippets(snips);
-			songs[i] = song;
-			i++;
+		if (docSummaries.length >0) {
+			int i = 0;
+			for (MatchDocumentSummary docSummary: docSummaries) {
+							
+				Snippet[] snips = getSnippets(docSummary);
+				
+				// read constituent documents			
+				Song song = songBuilder.getSong(docSummary.getUri() );
+				logger.debug("about to set snippets in song ");
+	
+				song.setSnippets(snips);
+				songs[i] = song;
+				i++;
+			}
 		}
 		return songs;
 
@@ -220,17 +226,19 @@ public class Search {
 		
 		List<Snippet> snippetList = new ArrayList<Snippet>();
 		
-		for (MatchLocation match: matches) {
-			
-			MatchSnippet[] snippets = match.getSnippets();
-			
-			for (MatchSnippet snippet: snippets) {
+		if (matches.length > 0) {
+			for (MatchLocation match: matches) {
 				
-				snippetList.add(new Snippet(snippet.getText(), snippet.isHighlighted()) );
+				MatchSnippet[] snippets = match.getSnippets();
 				
-				logger.debug(" snippet text is "+(snippet.isHighlighted()?" highlighted ":" NOT highlighted ")+" text value: "+snippet.getText());
+				for (MatchSnippet snippet: snippets) {
+					
+					snippetList.add(new Snippet(snippet.getText(), snippet.isHighlighted()) );
+					
+					logger.debug(" snippet text is "+(snippet.isHighlighted()?" highlighted ":" NOT highlighted ")+" text value: "+snippet.getText());
+				}
+				
 			}
-			
 		}
 		
 		logger.debug("gathered number of snippets = "+snippetList.size());
@@ -246,9 +254,11 @@ public class Search {
 	 */
 	private void logReports(SearchHandle resultsHandle) {
 		Report[] reports = resultsHandle.getReports();
-		for (Report report:reports) {
-			if (report.getMessage() != null)
-				logger.info("Report message: "+report.getMessage() );
+		if (reports != null) {
+			for (int i=0; i<reports.length; i++) {
+				if (reports[i].getMessage() != null)
+					logger.info("Report message: "+reports[i].getMessage() );
+			}
 		}
 		
 		
