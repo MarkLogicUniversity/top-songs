@@ -1,4 +1,4 @@
-package com.marklogic.training;
+package com.marklogic.training.helper;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -21,7 +21,7 @@ import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.training.MarkLogicConnection;
-import com.marklogic.training.util.LoadOptions;
+import com.marklogic.training.admin.LoadOptions;
 
 public class TestStructuredQuery {
 	private static final Logger logger = LoggerFactory.getLogger(TestStructuredQuery.class);

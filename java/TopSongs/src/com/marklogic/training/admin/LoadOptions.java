@@ -1,4 +1,4 @@
-package com.marklogic.training.util;
+package com.marklogic.training.admin;
 
 import java.io.InputStream;
 
