@@ -1,4 +1,4 @@
-package com.marklogic.training.resourceext;
+package com.marklogic.training.admin;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import com.marklogic.client.admin.ResourceExtensionsManager;
 import com.marklogic.client.admin.ResourceExtensionsManager.MethodParameters;
 import com.marklogic.client.io.InputStreamHandle;
 import com.marklogic.training.MarkLogicConnection;
+import com.marklogic.training.resourceext.SuggestionsManager;
 import com.marklogic.training.test.TestStructuredQuery;
 /*
  * run the static method in this class ( in main() below) in order to define the extension to the REST api which will implement search:suggest()
