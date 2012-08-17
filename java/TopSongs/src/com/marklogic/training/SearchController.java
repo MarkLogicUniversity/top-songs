@@ -364,7 +364,7 @@ public class SearchController {
 		return "search";
 	}
 	 
-	/*
+	/*  
 	 * create the MarkLogic Database connection
 	 */
 	@PostConstruct

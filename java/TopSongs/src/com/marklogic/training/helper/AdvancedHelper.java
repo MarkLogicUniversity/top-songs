@@ -47,7 +47,7 @@ public class AdvancedHelper {
 			}		
 		}
 		
-		if (genre != "") {	
+		if (genre != "" && !genre.equals("all") ) {	
 			String[] genreArr = genre.split(" ");
 			query.append(" genre:");
 			logger.debug("genre array contains elements "+genreArr.length);
