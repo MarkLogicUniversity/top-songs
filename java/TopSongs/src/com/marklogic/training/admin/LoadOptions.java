@@ -15,20 +15,16 @@ import com.marklogic.training.MarkLogicConnection;
 public class LoadOptions {
 	
 	private static final Logger logger = LoggerFactory.getLogger(LoadOptions.class);
-	private static final String OPTIONS_NAME = "genre-options";
-	private static final String OPTIONS_FILENAME = "data/query-options-genre.xml";
-//	private static final String OPTIONS_NAME = "full-options";
-//	private static final String OPTIONS_FILENAME = "data/query-options-full.xml";
-//	private static final String OPTIONS_NAME = "facets-only-full-options";
-//	private static final String OPTIONS_FILENAME = "data/query-options-facets-only.xml";	
-//	private static final String OPTIONS_NAME = "suggestion-options";
-//	private static final String OPTIONS_FILENAME = "data/suggestions-options.xml";	
 
 	/*
+	 * 
+	 * This class loads all the options necessary for the Top Songs project (actually the class LoadOptionsProgrammatically.java
+	 * also loads another set of options (no overlap with this class) - this should be run too).
+	 * 
 	 * Important to note that when reading options from a file you can use any normal handle - there is no need to use the QueryOptionsHandle.
 	 * Just need to make sure that the QueryOptionsManager is used to write it to the database.
 	 */
-	public static void load(boolean isSourceFile) {
+	public static void load(boolean isSourceFile, String options, String optionsFilename) {
 		try {
 			// we are using admin-role credentials in order to write new query options
 			// (note the properties filename)
@@ -43,15 +39,15 @@ public class LoadOptions {
 				if (isSourceFile) {
 				    // build options - FROM FILE
 					logger.info("set handle from byte[]");
-					InputStreamHandle ish = readOptionsFromFile();
+					InputStreamHandle ish = readOptionsFromFile(optionsFilename);
 					logger.info("write following options to db :\n"+ish.toString());				
-					optionsMgr.writeOptions(OPTIONS_NAME, ish);	
+					optionsMgr.writeOptions(options, ish);	
 
 				} else {
 					// build options - FROM CODE
 					QueryOptionsHandle qoh = buildOptionsInCode();
 					logger.info("write to db");				
-					optionsMgr.writeOptions(OPTIONS_NAME, qoh);						
+					optionsMgr.writeOptions(options, qoh);						
 				}
 
 				
@@ -61,9 +57,9 @@ public class LoadOptions {
 				StringHandle readHandle = new StringHandle();
 
 				// read the query options from the database
-				optionsMgr.readOptions(OPTIONS_NAME, readHandle);
+				optionsMgr.readOptions(options, readHandle);
 				
-				logger.info("Search Options" +" named "+ OPTIONS_NAME + " : \n" + readHandle.get());
+				logger.info("Search Options" +" named "+ options + " : \n" + readHandle.get());
 
 			} catch (Exception e) {
 				logger.error("Exception : " + e.toString() );
@@ -90,15 +86,15 @@ public class LoadOptions {
 	
 		return handle;
 	}
-	private static InputStreamHandle readOptionsFromFile() {
+	private static InputStreamHandle readOptionsFromFile(String filename) {
 		InputStream optsStream = null;
 		try {
-			optsStream = LoadOptions.class.getClassLoader().getResourceAsStream(OPTIONS_FILENAME);
+			optsStream = LoadOptions.class.getClassLoader().getResourceAsStream(filename);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);
 		}
 		if (optsStream == null)
-			throw new RuntimeException("Could not read marklogic search options in " + OPTIONS_FILENAME);
+			throw new RuntimeException("Could not read marklogic search options in " + filename);
 
 		InputStreamHandle ish = new InputStreamHandle(optsStream);
 		
@@ -109,7 +105,10 @@ public class LoadOptions {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		load(true);
+		load(true,"genre-options"			,"data/query-options-genre.xml");
+		load(true,"full-options"			,"data/query-options-full.xml");
+		load(true,"facets-only-full-options","data/query-options-facets-only.xml");
+		load(true,"suggestion-options"		,"data/suggestions-options.xml");
 
 	}
 

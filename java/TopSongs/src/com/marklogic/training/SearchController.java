@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import com.marklogic.client.query.StructuredQueryBuilder;
 import com.marklogic.training.helper.AdvancedHelper;
 import com.marklogic.training.model.Pagination;
 import com.marklogic.training.model.Query;
@@ -359,9 +360,9 @@ public class SearchController {
 	@RequestMapping("bday.html")	
 	public String birthdaySearch(@RequestParam("bday") String bday, Model model) {
 		
-		logger.info("Routing to birthday search page ..");
+		logger.info("Routing to birthday search page with birthday .. "+bday);
 		
-		return "search";
+		return detail(search.getBirthdaySong(bday),model);
 	}
 	 
 	/*  

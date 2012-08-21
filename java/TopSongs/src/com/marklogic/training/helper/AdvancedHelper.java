@@ -84,9 +84,11 @@ public class AdvancedHelper {
 			
 		}
 		if (songtitle != ""){
-			query.append(" title:\""+songtitle+"\"");
+			query.append(" title:"+"\""+songtitle.replaceAll("\"", "&quot;")+"\"");
 			query.append(" ");
 		}
+		
+		logger.info(" query string advanced is "+query.toString());
 		
 		return query.toString();
 	}

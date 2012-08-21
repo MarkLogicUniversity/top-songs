@@ -6,14 +6,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
+import javax.xml.namespace.QName;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.marklogic.client.admin.QueryOptionsManager;
 import com.marklogic.client.admin.ServerConfigurationManager;
+import com.marklogic.client.admin.config.QueryOptions;
+import com.marklogic.client.admin.config.QueryOptionsBuilder;
+import com.marklogic.client.admin.config.support.RangeSpec;
 import com.marklogic.client.document.BinaryDocumentManager;
 import com.marklogic.client.io.InputStreamHandle;
+import com.marklogic.client.io.QueryOptionsHandle;
 import com.marklogic.client.io.SearchHandle;
 import com.marklogic.client.io.SearchHandle.Report;
 import com.marklogic.client.query.FacetResult;
@@ -23,6 +29,9 @@ import com.marklogic.client.query.MatchLocation;
 import com.marklogic.client.query.MatchSnippet;
 import com.marklogic.client.query.QueryManager;
 import com.marklogic.client.query.StringQueryDefinition;
+import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
+import com.marklogic.client.query.ValuesDefinition;
 
 import com.marklogic.training.jaxb.JAXBSongBuilder;
 import com.marklogic.training.model.Facet;
@@ -40,6 +49,7 @@ public class Search {
 	private static final String FULL_OPTIONS = "full-options";
 	private static final String FACETS_ONLY = "facets-only-full-options";
 	private static final String GENRE_ONLY = "genre-options";
+	private static final String BIRTHDAY_QUERY = "birthday-query-options";
 	private static final String CONNECTION_ATTR_NAME = "com.marklogic.training.server.connection";
 	private static final Logger logger = LoggerFactory.getLogger(Search.class);
 	private MarkLogicConnection conn = null;
@@ -105,6 +115,38 @@ public class Search {
 		SearchResults results = new SearchResults(facets, songs, resultsHandle.getTotalResults(), queryMgr.getPageLength() );
 		return results;
 		
+	}
+	public String getBirthdaySong(String date) {
+		
+		// create a manager for searching
+		QueryManager queryMgr = conn.getClient().newQueryManager();
+
+		// create a query builder for the query options
+       StructuredQueryBuilder qb = new StructuredQueryBuilder(BIRTHDAY_QUERY);
+       
+        // build a range query
+       StructuredQueryDefinition querydef = qb.rangeConstraint("week", StructuredQueryBuilder.Operator.GE, date);
+
+       // create a handle for the search results
+       SearchHandle resultsHandle = new SearchHandle();
+
+       // run the search
+       queryMgr.search(querydef, resultsHandle);
+       logReports(resultsHandle);
+       // iterate over the result documents
+       MatchDocumentSummary[] docSummaries = resultsHandle.getMatchResults();
+       logger.info("Listing "+docSummaries.length+" documents:\n");
+       for (int i=0; i<docSummaries.length ; i++)  {
+    	   logger.debug("retrieved the following document "+docSummaries[i].getUri());
+       }
+       if (docSummaries.length >= 1) {
+    	   String uri = docSummaries[0].getUri();
+    	   logger.info("birthday song is"+uri);
+    	   return uri;
+			
+       }
+      
+       return "";
 	}
 	/*
 	 * this method invokes the REST extension which in turn calls search:search() on the server
