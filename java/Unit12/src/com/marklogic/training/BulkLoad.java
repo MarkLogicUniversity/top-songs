@@ -15,7 +15,7 @@ public class BulkLoad {
 
 	private static final Logger logger = LoggerFactory.getLogger(BulkLoad.class);
 	
-	public static void load(String path) {
+	public static void load(String path, String uriPath) {
 		try {
 			MarkLogicConnection conn = new MarkLogicConnection();
 			
@@ -34,7 +34,7 @@ public class BulkLoad {
 			
 					// create a handle on the content
 					InputStreamHandle contentHandle = new InputStreamHandle(docStream);
-					String uid = path+list[i];
+					String uid = uriPath+list[i];
 					
 					//logger.info("Writing document "+uid +" to db"  );
 					
@@ -67,7 +67,8 @@ public class BulkLoad {
 		//set up document id to be read from the database
 		String pathToExercises = "/Users/jcrean/Training/DevelopingMarkLogicApplications/Exercises";
 		String pathToFile = "mls-developer/unit12/top-songs-source/songs";
-		load(pathToExercises+File.separator+pathToFile);
+		String uriPath = "/songs/";
+		load(pathToExercises+File.separator+pathToFile, uriPath);
 	}
 
 }
