@@ -31,6 +31,7 @@ import com.marklogic.training.model.Pagination;
 import com.marklogic.training.model.Query;
 import com.marklogic.training.model.SearchResults;
 import com.marklogic.training.model.Song;
+import com.marklogic.training.model.Sortoptions;
 import com.marklogic.training.security.MarkLogicCredentials;
 
 @Controller
@@ -400,10 +401,7 @@ public class SearchController {
 			
 		}
 	}
-	public static HttpSession session() {
-	    ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-	    return attr.getRequest().getSession(true); // true == allow create
-	}
+
 	/*
 	 * user parameter validation 
 	 * calculates the effective search argument
