@@ -50,6 +50,7 @@ public class Search {
 	private static final String FACETS_ONLY = "facets-only-full-options";
 	private static final String GENRE_ONLY = "genre-options";
 	private static final String BIRTHDAY_QUERY = "birthday-query-options";
+	private static final String ADVANCED_OPTIONS = "advanced-options";
 	private static final String CONNECTION_ATTR_NAME = "com.marklogic.training.server.connection";
 	private static final Logger logger = LoggerFactory.getLogger(Search.class);
 	private MarkLogicConnection conn = null;
@@ -116,6 +117,38 @@ public class Search {
 		return results;
 		
 	}
+	/*
+	 * this method uses structured search 
+	 * @param query : this is a structured query definition which was built as the user input was processed.
+	 * 
+	 */
+	public SearchResults advancedSearch(StructuredQueryDefinition query) {
+		logger.info("Performing advancedSearch() " );
+		
+		String options = ADVANCED_OPTIONS;
+				
+		// create a manager for searching
+		QueryManager queryMgr = conn.getClient().newQueryManager();
+
+		// create a handle for the search results
+		SearchHandle resultsHandle = new SearchHandle();
+
+		// set the page length
+		queryMgr.setPageLength(10);
+		// run the search
+		queryMgr.search(query, resultsHandle);
+		
+		logger.info("Advanced Search Matched "+resultsHandle.getTotalResults() );
+
+		logReports(resultsHandle);
+		Song[] songs = getSongs(resultsHandle);
+		Facet[] facets = getFacets(resultsHandle);
+		SearchResults results = new SearchResults(facets, songs, resultsHandle.getTotalResults(), queryMgr.getPageLength() );
+		return results;
+		
+	}
+
+
 	public String getBirthdaySong(String date) {
 		
 		// create a manager for searching
@@ -209,7 +242,10 @@ public class Search {
 		
 		List<Facet> fl = new ArrayList<Facet>();
 		// retrieve facet results from search client
-		FacetResult[] facetResults = results.getFacetResults();	
+		FacetResult[] facetResults = results.getFacetResults();
+		if (facetResults == null) 
+			return null;
+		
 		logger.info("returned data on "+facetResults.length+" facets " );
 		
 		for (FacetResult facetResult: facetResults) {

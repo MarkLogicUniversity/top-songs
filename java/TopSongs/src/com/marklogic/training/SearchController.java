@@ -3,6 +3,7 @@ package com.marklogic.training;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,7 +27,9 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.marklogic.client.query.StructuredQueryBuilder;
+import com.marklogic.client.query.StructuredQueryDefinition;
 import com.marklogic.training.helper.AdvancedHelper;
+import com.marklogic.training.holder.QueryHolder;
 import com.marklogic.training.model.Pagination;
 import com.marklogic.training.model.Query;
 import com.marklogic.training.model.SearchResults;
@@ -126,8 +129,8 @@ public class SearchController {
 			song = search.getSongDetails(arg);
 		} catch (Exception e) {
 			logger.error("caught exception in detail()"+e.toString() );
+ 
 		}
-
 		model.addAttribute("song", song);
 		// set the display mode for the JSP  
 		model.addAttribute("mode", "detail");
@@ -143,6 +146,13 @@ public class SearchController {
 			
 		} catch (Exception e ) {
 			logger.error("caught exception in search() "+e.toString() );
+			StringWriter sw = new StringWriter();
+			PrintWriter pw = new PrintWriter(sw, true);
+			e.printStackTrace(pw);
+			pw.flush();
+			sw.flush();
+			logger.error( sw.toString() );
+
 
 		}
 		model.addAttribute("query", query);
@@ -228,11 +238,55 @@ public class SearchController {
 		logger.info(" search with field creator " + creator);
 		logger.info(" search with song title " + songtitle);
 		
-		String arg = AdvancedHelper.buildQueryString(keywords, type, exclude, genre, creator, songtitle);
+		QueryHolder qh = AdvancedHelper.buildQuery(keywords, type, exclude, genre, creator, songtitle);
+		String arg = qh.getStringQuery();
+		StructuredQueryDefinition structuredQuery = qh.getStructuredQuery();
 		arg = arg + " sort:newest";
 		logger.info("effective search arg = "+arg );
-	
-		return search(arg,null,null,1,model);
+
+		// at this stage we can make the choice between executing a
+		// string search based on the computed search string contained in arg
+		// comment in the following line to activate the string search
+		// return search(arg,null,null,1,model);
+		
+		// or we can use the computed structured query object contained in 
+		// structuredQuery
+		
+		Sortoptions[] options = fillSortbyOptions(arg);
+		
+		SearchResults results = null;
+		Query query = new Query();
+		query.setParameter(arg);
+		try {
+			 
+			results = search.advancedSearch(structuredQuery);
+			
+		} catch (Exception e ) {
+			logger.error("caught exception in search() "+e.toString() );
+
+		}
+		Pagination pagination = calculatePaginationDetails(1, 
+														  (results == null?0:results.getTotal()), 
+														  (results == null?10:results.getPageLength()) );
+		
+		logger.debug("pagination details follow "+ pagination);
+		logger.info("search arg before JSP " + query.getParameter());
+		// set the display mode for the JSP  
+		model.addAttribute("mode", "list");
+		// add the display data objects for processing in the JSP
+		model.addAttribute("results", results);
+		model.addAttribute("query", query);
+		model.addAttribute("sortoptions", options);
+		model.addAttribute("page", pagination);
+		if (credentials.isLoggedOn()) {
+			model.addAttribute("login", "ok");
+			model.addAttribute("loginmsg", " you are logged in as "+credentials.getCurrentLevel());
+		}
+		return "search";
+
+		
+ 
+		
 		
 	}	
 	/**

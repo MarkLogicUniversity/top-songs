@@ -38,6 +38,7 @@
     <attribute ns="" name="last"/>
     <element ns="http://marklogic.com/MLU/top-songs" name="weeks"/>
     <facet-option>limit=10</facet-option>
+    <facet-option>descending</facet-option>
   </range>
 </constraint>
 <constraint name="genre">

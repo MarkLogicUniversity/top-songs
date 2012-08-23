@@ -70,7 +70,7 @@ public class JAXBSongBuilder implements SongBuilder {
 		song.setWeeks((topsong.getWeeks() == null?"": topsong.getWeeks().toCSL()) );
 		logger.debug(" Song actual weeks at #1 " + song.getWeeks() );
 		
-		song.setAlbumimage( (topsong.getAlbum() == null?"":topsong.getAlbum().getUri() ));
+		song.setAlbumimage( (topsong.getAlbum().getUri() == null?"":topsong.getAlbum().getUri() ));
 		logger.debug(" Song album image uri " + song.getAlbumimage() );
 		
 		return song;
