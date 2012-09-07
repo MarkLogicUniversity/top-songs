@@ -52,7 +52,7 @@ public class LoadOptionsProgrammatically {
 
 				// Create a builder for constructing query configurations.
 				QueryOptionsBuilder qob = new QueryOptionsBuilder();
-				RangeSpec rs = qob.elementRangeIndex(new QName("http://marklogic.com/MLU/top-songs","week"), qob.rangeType(new QName("xs:date")) );
+				RangeSpec rs = qob.elementRangeIndex(new QName("http://marklogic.com/MLU/top-songs","week"), qob.rangeType(new String("xs:date")) );
 				
 				// create the query options - a simple range constraint and a sort order.
 				QueryOptionsHandle queryOptions = new QueryOptionsHandle()
@@ -115,7 +115,7 @@ public class LoadOptionsProgrammatically {
 
 				RangeSpec rs = qob.elementAttributeRangeIndex(new QName("http://marklogic.com/MLU/top-songs","weeks"), 
 															  new QName("","last"), 
-															  qob.rangeType(new QName("xs:date") )
+															  qob.rangeType(new String("xs:date") )
 																	  );
 				RangeSpec art = qob.elementRangeIndex(new QName("http://marklogic.com/MLU/top-songs","artist"), 
 						  							  qob.stringRangeType("http://marklogic.com/collation/en/S1/AS/T00BB")

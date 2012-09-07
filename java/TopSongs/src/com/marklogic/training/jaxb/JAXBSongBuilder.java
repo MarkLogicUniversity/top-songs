@@ -54,29 +54,29 @@ public class JAXBSongBuilder implements SongBuilder {
 			song.setAlbum(topsong.getAlbum().getAlbum() );
 			song.setAlbumimage( (topsong.getAlbum().getUri() == null?"":topsong.getAlbum().getUri() ));			
 		}
-		logger.info(" Song album " + song.getAlbum() );
-		logger.info(" Song album image uri " + song.getAlbumimage() );
+		logger.debug(" Song album " + song.getAlbum() );
+		logger.debug(" Song album image uri " + song.getAlbumimage() );
 
 		song.setLabel((topsong.getLabel() == null?"":topsong.getLabel() ) );
-		logger.info(" Song label " + song.getLabel() );
+		logger.debug(" Song label " + song.getLabel() );
 		
 		song.setWriters((topsong.getWriters() == null?"":topsong.getWriters().toCSL() ) );
-		logger.info(" Song writers " + song.getWriters() );
+		logger.debug(" Song writers " + song.getWriters() );
 		
 		song.setProducers( (topsong.getProducers() == null?"": topsong.getProducers().toCSL() ) );
-		logger.info(" Song producers " + song.getProducers() );
+		logger.debug(" Song producers " + song.getProducers() );
 		
 		song.setFormats( (topsong.getFormats() == null?"":topsong.getFormats().toCSL() ) );
-		logger.info(" Song formats " + song.getFormats() );
+		logger.debug(" Song formats " + song.getFormats() );
 		
 		song.setLengths( (topsong.getLengths() == null?"":topsong.getLengths().toCSL()  ));
-		logger.info(" Song lengths " + song.getLengths() );
+		logger.debug(" Song lengths " + song.getLengths() );
 		
 		song.setDescription(topsong.stringifyDescr() ); 
-		logger.info(" Song description " + song.getDescription() );
+		logger.debug(" Song description " + song.getDescription() );
 
 		song.setWeeks((topsong.getWeeks() == null?"": topsong.getWeeks().toCSL()) );
-		logger.info(" Song actual weeks at #1 " + song.getWeeks() );
+		logger.debug(" Song actual weeks at #1 " + song.getWeeks() );
 		
 		
 		return song;
@@ -97,9 +97,9 @@ public class JAXBSongBuilder implements SongBuilder {
 	{
 		List<String> week = new ArrayList<String>();
 		String[] weekTokens = weekString.split(",");
-		logger.info("found "+weekTokens.length + "weeks");
+		logger.debug("found "+weekTokens.length + "weeks");
 		for (String weekToken: weekTokens) {
-			logger.info("week is "+ weekToken);
+			logger.debug("week is "+ weekToken);
 			week.add(weekToken);
 		}
 		
@@ -178,13 +178,13 @@ public class JAXBSongBuilder implements SongBuilder {
 
 		JAXBHandle writeHandle = new JAXBHandle(context);
 		String uri = ("/songs/"+artist+"+"+title+".xml").replaceAll(" ", "-");
-		logger.info("writing song " + uri+" to ML");
+		logger.debug("writing song " + uri+" to ML");
 		writeHandle.set(ts);
 		docMgr.write(uri, writeHandle);
 		// read the persisted XML document for the logging message
 		String songDoc = docMgr.read(uri, new StringHandle()).get();
 		
-		logger.info("read document: \n"+songDoc);						
+		logger.debug("read document: \n"+songDoc);						
 
 	}
 	
@@ -192,23 +192,23 @@ public class JAXBSongBuilder implements SongBuilder {
 		Song song = new Song();
 		// implement me !!
 		song.setTitle((topsong.getTitle() == null?"":topsong.getTitle() ) );
-		logger.info("song title is " + song.getTitle() );
+		logger.debug("song title is " + song.getTitle() );
 
 		
 		song.setArtist((topsong.getArtist() == null?"":topsong.getArtist() ) );
-		logger.info("song artist is " + song.getArtist() );
+		logger.debug("song artist is " + song.getArtist() );
 
 		song.setUri((uri == null?"": uri));
-		logger.info("song uri is " + song.getPlainTextUri() );
+		logger.debug("song uri is " + song.getPlainTextUri() );
 		
 		song.setGenres( (topsong.getGenres() == null?"": topsong.getGenres().toCSL() ) );
-		logger.info("song genres is/are " + song.getGenres() );
+		logger.debug("song genres is/are " + song.getGenres() );
 		 
 		song.setWeekending((topsong.getWeeks() == null?"": topsong.getWeeks().getLast() ) );
-		logger.info("song last week in charts was " + song.getWeekending() );
+		logger.debug("song last week in charts was " + song.getWeekending() );
 
 		song.setTotalweeks((topsong.getWeeks() == null?0:topsong.getWeeks().getWeek().size() ) );
-		logger.info(" number of weeks at #1 was " + song.getTotalweeks() );
+		logger.debug(" number of weeks at #1 was " + song.getTotalweeks() );
 		
 		return song;
 	}

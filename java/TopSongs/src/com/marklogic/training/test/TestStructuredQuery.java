@@ -59,7 +59,7 @@ public class TestStructuredQuery {
 
 				RangeSpec rs = qob.elementAttributeRangeIndex(new QName("http://marklogic.com/MLU/top-songs","weeks"), 
 															  new QName("","last"), 
-															  qob.rangeType(new QName("xs:date") )
+															  qob.rangeType(new String("xs:date") )
 																	  );
 				RangeSpec art = qob.elementRangeIndex(new QName("http://marklogic.com/MLU/top-songs","artist"), 
 						  							  qob.stringRangeType("http://marklogic.com/collation/en/S1/AS/T00BB")
