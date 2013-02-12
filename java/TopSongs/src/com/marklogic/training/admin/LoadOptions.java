@@ -109,6 +109,7 @@ public class LoadOptions {
 		load(true,"full-options"			,"data/query-options-full.xml");
 		load(true,"facets-only-full-options","data/query-options-facets-only.xml");
 		load(true,"suggestion-options"		,"data/suggestions-options.xml");
+		load(true,"chart-options"		,"data/chart-options.xml");
 
 	}
 

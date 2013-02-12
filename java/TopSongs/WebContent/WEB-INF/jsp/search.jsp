@@ -7,6 +7,7 @@
 <title>Top Songs</title>
 <link href="resources/css/top-songs.css" rel="stylesheet" type="text/css"/>
 <script src="resources/js/top-songs.js"  type="text/javascript" ></script>
+
 </head>
 <body>
 <div id="wrapper">
@@ -14,7 +15,8 @@
 <div id="leftcol">
   <c:set var="query" value="${fn:escapeXml(query.parameter)}" />
   <c:set var="maxfacets" value="8" />
-    
+  
+ 
   <div class="facet">
 	<c:forEach items="${results.facets}" var="facet">
 		<c:if test="${fn:length(facet.facetvalues) ne '0'}" >
